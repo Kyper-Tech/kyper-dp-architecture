@@ -72,9 +72,11 @@ Zones are NEVER elements. zone ∈ {raw, curated, sandbox-<env>}.
 A binding answers one question: which product fulfills this component's
 contract, for this tenant class?
 
-    component (KYP-ID) x tenantClass  ->  product + posture
+    component (KYP-ID)  states   a contract
+    binding:  contract x tenantClass  ->  product + posture
+    gate:     product must satisfy the contract profile
 
-Terms in that formula:
+Every term below appears in those three lines:
 - contract — the promise the component states in the model (e.g. an
   S3-compatible object API). The only thing other components may depend on.
 - contract profile — the contract made explicit: `required` rows components
