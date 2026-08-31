@@ -109,7 +109,7 @@ model {
     }
 
     syncLayer = boundary 'Sync layer' {
-      description 'Message transport, artifact transfer, offline queue, traffic priority per link class'
+      description 'Message transport, artifact transfer, offline queue, traffic priority per siteClass'
       metadata { kypId 'KYP-T-SYNC-01'; adr 'ADR-0003' }
     }
   }

@@ -9,7 +9,7 @@ affects: [KYP-T-SYNC-01, KYP-E]
 Edge sites lose WAN for days; neither side may depend on the other's service addresses.
 ## Decision
 A boundary component with message transport, artifact transfer, offline queue and traffic
-priority per link class. Whether one or two products implement it is a binding decision.
+priority per siteClass. Whether one or two products implement it is a binding decision.
 ## Consequences
 Model bundles too large for a bus need artifact transfer; both sides store-and-forward.
 ## Rejected alternatives

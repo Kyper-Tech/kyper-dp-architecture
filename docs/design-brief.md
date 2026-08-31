@@ -24,7 +24,7 @@ Pull-only downward. No inbound path from control plane into a tenant. (ADR-0001,
 - Tenant lifecycle — GAP: provision, suspend, offboard with data export
 
 The tenant registry carries: tenant class -> storage substrate -> availability
-posture; site connectivity classes; ingestion mode (push | pull); enabled
+posture; siteClass per site; ingestion mode (push | pull); enabled
 modules; version pins.
 
 ## Tenant plane
@@ -62,7 +62,7 @@ Catalog stays in data management — it IS the data access path (accepted asymme
 | Operation services | CI/CD, observability (+ outbound log shipper), synthetics, incidents/SLOs, scanning, backup + DR, metering | Exist once per tenant; consumed, never re-implemented. |
 
 ## Sync layer (boundary between tenant and edge) — ADR-0003
-Message transport · Artifact transfer · Offline queue · Traffic priority per link class.
+Message transport · Artifact transfer · Offline queue · Traffic priority per siteClass.
 Neither plane holds an address of a service in the other.
 
 ## Edge plane — optional, per site

@@ -50,4 +50,4 @@ receive pushed data, depending on the tenant. The invariant is credential
 scope — anything that reaches into a customer environment lives inside that
 customer's own tenant plane, never in the control plane. The per-tenant
 ingestion mode belongs in the control-plane tenant registry alongside
-connectivity classes and enabled modules.
+siteClass values and enabled modules.
