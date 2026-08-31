@@ -67,8 +67,12 @@ Where you work and what you may publish:
 
 ![Developer workspaces](../../diagrams/views/developerWorkspaces.png)
 
-How you reach data — everything through the catalog, dev reads curated,
-ML raw under audited grants:
+How you reach data. Analytical data is catalog-mediated: dev reads curated,
+ML raw under audited grants. Operational databases are different — accessed
+directly by the one application that owns them (store.class = operational),
+no catalog in the path. During development: durable app state belongs in
+the nonprod operational database; throwaway databases live in workspace
+scratch and die with it.
 
 ![Developer data](../../diagrams/views/developerData.png)
 

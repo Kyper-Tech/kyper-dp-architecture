@@ -108,6 +108,8 @@ Every metadata key used in the model must be listed here.
   absent on an area = it is a band
 - shared ∈ {across-envs} — one instance serves all environments (data layer)
 - status ∈ {gap} — declared in the architecture but not yet designed
+- owner ∈ (a KYP-ID) — on an operational store: the one component that owns
+  and directly accesses it (store.class operational requires exactly one)
 
 ## 6. Instances (nouns, never elements)
 An instance is one concrete deployment produced by applying a plane's

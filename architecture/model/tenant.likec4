@@ -72,7 +72,7 @@ model {
         metadata { kypId 'KYP-T-DATA-01'; class 'analytical'; adr 'ADR-0007' }
       }
       tables      = store 'Tables'               { metadata { kypId 'KYP-T-DATA-02'; class 'analytical' } }
-      opDb        = store 'Operational database' { metadata { kypId 'KYP-T-DATA-03'; class 'operational' } }
+      opDb        = store 'Operational database' { metadata { kypId 'KYP-T-DATA-03'; class 'operational'; owner 'KYP-T-APP-01' } }
       indexes     = store 'Indexes'              { metadata { kypId 'KYP-T-DATA-04'; class 'online' } }
       predictions = store 'Predictions'          { metadata { kypId 'KYP-T-DATA-07'; class 'analytical' } }
 
