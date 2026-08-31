@@ -182,7 +182,8 @@ terms are admitted only under that test.
 | zone | zone | IEC 62443; raw/curated conventions | exactly one access rule per zone |
 | contract | interface | UML interface, ArchiMate application interface | the only dependable surface of a component |
 | contract profile | interface specification | UML | explicit required / not-relied-upon rows |
-| binding, product | realization | UML/ArchiMate realization | keyed by KYP-ID x tenantClass; products banned from the model |
+| binding | realization (the relationship) | UML/ArchiMate realization | keyed by KYP-ID x tenantClass; recorded outside the model |
+| product | technology element | ArchiMate system software, UML artifact | banned from the model (ADR-0007) |
 | servesTo | serving | ArchiMate serving | source must be a registry |
 | readsVia | access (read) | ArchiMate access | must pass through a mediator service |
 | publishesTo | access (write) / flow | ArchiMate | target must be registry or store; versioned |
