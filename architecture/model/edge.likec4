@@ -14,7 +14,7 @@ model {
       localAlerts = service 'Local alerting'     { metadata { kypId 'KYP-E-RT-04'; adr 'ADR-0010' } }
     }
 
-    site = area 'Site services' {
+    site = area 'Site management' {
       metadata { kypId 'KYP-E-SITE' }
       updateAgent = service 'Update agent'            { metadata { kypId 'KYP-E-SITE-01' } }
       deviceId    = service 'Identity, attestation'   { metadata { kypId 'KYP-E-SITE-02' } }

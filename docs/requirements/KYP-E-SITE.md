@@ -1,4 +1,4 @@
-# Requirements — Edge site services (KYP-E-SITE)
+# Requirements — Edge site management (KYP-E-SITE)
 
 Boundary rule: always present when edge is deployed.
 

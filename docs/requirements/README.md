@@ -35,7 +35,7 @@ Tenant plane:
 
 Edge plane:
 - [KYP-E-RT](KYP-E-RT.md) — inference runtime
-- [KYP-E-SITE](KYP-E-SITE.md) — site services
+- [KYP-E-SITE](KYP-E-SITE.md) — site management
 - [KYP-E-APP](KYP-E-APP.md) — application (optional)
 - [KYP-E-ORCH](KYP-E-ORCH.md) — orchestration (optional)
 

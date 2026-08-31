@@ -71,7 +71,7 @@ Neither plane holds an address of a service in the other.
 | Area | Contains | Rule |
 |---|---|---|
 | Inference runtime | Inference, preprocess/filter, store-and-forward, local alerting | Alerting is a replica: acks sync upward, tenant alerting authoritative (ADR-0010). |
-| Site services | Update agent, device identity + attestation, time sync, network services | Always present when edge is deployed. |
+| Site management | Update agent, device identity + attestation, time sync, network services | Always present when edge is deployed. |
 | Application *(optional)* | Operator UI, local API | Deployed only at some sites. |
 | Orchestration *(optional)* | Local schedules, buffer flush | Schedules only what must survive disconnection. |
 
@@ -102,4 +102,4 @@ rehearsal = nonprod run against curated read-only.
 ISO/IEC 23053 (vocabulary), ISO/IEC 5338/42001/23894/5259, CNCF CNAI + Data-on-K8s AI
 whitepaper, AWS Well-Architected ML Lens + SaaS Lens, Google MLOps practitioners guide,
 IIC IIRA v1.10 (tiers, gateway pattern = sync layer), IEC 62443 zones/conduits, OpenInfra
-Edge-AI whitepaper (applied in v13: site services, local preprocessing/alerting, traffic priority).
+Edge-AI whitepaper (applied in v13: site management, local preprocessing/alerting, traffic priority).
