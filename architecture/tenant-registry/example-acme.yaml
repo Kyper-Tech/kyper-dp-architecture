@@ -1,0 +1,34 @@
+# Tenant registry record — SCHEMA BY EXAMPLE (ADR-0013).
+# The control-plane tenant registry (KYP-C-FLEET-01) implements this shape.
+# This file is the contract and the only sample kept in the repo; real
+# records live in the tenant registry, never here (one surface per fact).
+# Instance sheets are GENERATED, never authored:
+#   python3 scripts/render_instance_sheet.py \
+#     --record architecture/tenant-registry/example-acme.yaml --env nonprod
+
+tenant: acme                 # unique slug; the fleet-wide join key
+tenantClass: onprem          # taxonomy §1 axis
+availabilityPosture: standard
+ingestionMode: pull          # push | pull (ADR-0001)
+enabledModules: [ml, edge]
+versionPins:
+  platform: "1.4.2"
+sites:                       # instances of the edge plane (taxonomy §6)
+  - { site: plant-a, siteClass: remote }
+  - { site: plant-b, siteClass: connected }
+environments:                # instances of the environment container (§6)
+  nonprod:
+    endpoints:               # keyed by KYP-ID — the join key (taxonomy §7)
+      KYP-T-REG-01: https://git.nonprod.acme.kyper.example
+      KYP-T-REG-02: https://artifacts.nonprod.acme.kyper.example
+      KYP-T-REG-03: https://models.nonprod.acme.kyper.example
+      KYP-T-DATA-05: https://catalog.nonprod.acme.kyper.example
+      KYP-T-DATA-06: https://query.nonprod.acme.kyper.example
+      KYP-T-APP-02: https://api.nonprod.acme.kyper.example
+    quotas: { gpu: 2, cpu: 64 }
+  prod:
+    endpoints:
+      KYP-T-REG-03: https://models.acme.kyper.example
+      KYP-T-DATA-05: https://catalog.acme.kyper.example
+      KYP-T-APP-02: https://api.acme.kyper.example
+    quotas: { gpu: 4, cpu: 128 }
