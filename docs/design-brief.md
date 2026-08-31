@@ -34,6 +34,7 @@ modules; version pins.
 |---|---|---|
 | Dev workspace | Sessions, build/test jobs, environment images, scratch | Ephemeral (ADR-0004). Publishes only to source + artifact repos; curated data only. (ADR-0012) |
 | ML workspace | Notebook sessions, training jobs, environment images, scratch | Ephemeral (ADR-0004). Publishes only to model registry + experiments; raw reads under audited grants. (ADR-0012) |
+| Data workspace | Sessions, pipeline build/test jobs, environment images, scratch | Ephemeral (ADR-0004). Publishes only to source + artifact repos; raw + curated reads under audited grants, for pipeline development. (ADR-0015) |
 | Serving | Model runtime, retrieval, inference gateway, drift monitor | Stateless: models in from registry, predictions out to storage. |
 | Application | App runtime, API gateway, alerting (authority), public ingress | Stateless; the only public entry point. |
 | Orchestration | Ingest, transform, scoring, retraining trigger, idle scale | One scheduler per environment; owns all recurring work incl. scale-to-zero. |

@@ -12,7 +12,7 @@ views {
       color muted
       opacity 10%
       border dashed
-      include devws, mlws, serving, application, orchestration
+      include devws, mlws, dataws, serving, application, orchestration
     }
     group 'Shared across environments' {
       color green
@@ -28,7 +28,7 @@ views {
     }
     rank sink { data }
     autoLayout TopBottom
-    style devws, mlws {
+    style devws, mlws, dataws {
       color indigo
     }
     style serving, application {
@@ -72,7 +72,7 @@ views {
       color indigo
       opacity 10%
       border dashed
-      include tenant.devws.*, tenant.mlws.*, tenant.ops.cicd
+      include tenant.devws.*, tenant.mlws.*, tenant.dataws.*, tenant.ops.cicd
     }
     group 'Registries — the only handoff seam' {
       color indigo
@@ -87,7 +87,7 @@ views {
       include tenant.serving.*, tenant.application.*
     }
     autoLayout LeftRight
-    style tenant.devws.*, tenant.mlws.* {
+    style tenant.devws.*, tenant.mlws.*, tenant.dataws.* {
       color indigo
     }
     style tenant.serving.*, tenant.application.* {
@@ -117,6 +117,12 @@ views {
       border dashed
       include tenant.mlws.*
     }
+    group 'Data workspace' {
+      color indigo
+      opacity 10%
+      border dashed
+      include tenant.dataws.*
+    }
     group 'Registries — your only publish targets' {
       color indigo
       opacity 15%
@@ -127,23 +133,23 @@ views {
   }
   view developerData {
     title 'Developer view — how you reach data'
-    include tenant.devws, tenant.mlws, tenant.data.catalog, tenant.data.queryEngine, tenant.data.accessPolicy, tenant.data.zones
+    include tenant.devws, tenant.mlws, tenant.dataws, tenant.data.catalog, tenant.data.queryEngine, tenant.data.accessPolicy, tenant.data.zones
     autoLayout LeftRight
     style tenant.data.catalog, tenant.data.queryEngine, tenant.data.accessPolicy, tenant.data.zones {
       color green
     }
-    style tenant.devws, tenant.mlws {
+    style tenant.devws, tenant.mlws, tenant.dataws {
       color indigo
     }
   }
   view codeToProduction {
     title 'Developer view — from commit to production'
-    include tenant.devws.sessions, tenant.devws.buildJobs, tenant.mlws.trainingJobs, tenant.ops.cicd, tenant.registries.sourceRepo, tenant.registries.artifactRepo, tenant.registries.modelRegistry, tenant.application.appRuntime, tenant.serving.modelRuntime, tenant.trust.admission
+    include tenant.devws.sessions, tenant.devws.buildJobs, tenant.mlws.trainingJobs, tenant.dataws.sessions, tenant.dataws.pipelineJobs, tenant.ops.cicd, tenant.registries.sourceRepo, tenant.registries.artifactRepo, tenant.registries.modelRegistry, tenant.application.appRuntime, tenant.serving.modelRuntime, tenant.orchestration.scheduler, tenant.trust.admission
     autoLayout LeftRight
     style tenant.registries.* {
       color indigo
     }
-    style tenant.application.appRuntime, tenant.serving.modelRuntime {
+    style tenant.application.appRuntime, tenant.serving.modelRuntime, tenant.orchestration.scheduler {
       color red
     }
   }

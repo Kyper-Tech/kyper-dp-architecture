@@ -22,6 +22,15 @@ model {
       scratch      = service 'Scratch runtime'    { metadata { kypId 'KYP-T-MLWS-04' } }
     }
 
+    dataws = area 'Data workspace' {
+      description 'Ephemeral, nothing durable. Hands off only to source/artifact repos; raw and curated reads under audited grants, for pipeline development.'
+      metadata { kypId 'KYP-T-DATAWS'; envScoped 'true'; adr 'ADR-0004,ADR-0015' }
+      sessions     = service 'Sessions'                  { metadata { kypId 'KYP-T-DATAWS-01' } }
+      pipelineJobs = service 'Pipeline build, test jobs' { metadata { kypId 'KYP-T-DATAWS-02' } }
+      envImages    = service 'Environment images'        { metadata { kypId 'KYP-T-DATAWS-03' } }
+      scratch      = service 'Scratch runtime'           { metadata { kypId 'KYP-T-DATAWS-04' } }
+    }
+
     serving = area 'Serving' {
       description 'Stateless. Models in from registry, predictions out to storage.'
       metadata { kypId 'KYP-T-SRV'; envScoped 'true' }
@@ -121,6 +130,10 @@ model {
   tenant.devws.sessions       -[readsVia]->    tenant.data.catalog       'curated-zone reads'
   tenant.devws.sessions       -[publishesTo]-> tenant.registries.sourceRepo    'commits'
   tenant.devws.buildJobs      -[publishesTo]-> tenant.registries.artifactRepo  'images, packages'
+  tenant.dataws.sessions      -[readsVia]->    tenant.data.catalog       'raw + curated reads (audited)'
+  tenant.dataws.sessions      -[publishesTo]-> tenant.registries.sourceRepo    'pipeline code commits'
+  tenant.dataws.pipelineJobs  -[publishesTo]-> tenant.registries.artifactRepo  'pipeline images, contract + quality definitions'
+  tenant.registries.artifactRepo -[servesTo]-> tenant.orchestration.scheduler  'promoted pipelines'
   tenant.registries.modelRegistry -[servesTo]-> tenant.serving.modelRuntime   'promoted models'
   tenant.ops.cicd             -[servesTo]->    tenant.application.appRuntime  'promoted artifacts'
   tenant.serving.modelRuntime -[readsVia]->    tenant.data.catalog       'feature reads'

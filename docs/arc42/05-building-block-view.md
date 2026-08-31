@@ -22,8 +22,9 @@ Three planes with pull-only trust downward
 ## Level 2 — Whitebox: tenant plane
 
 Areas grouped by lifecycle: the environment container — dev workspace, ML
-workspace ([ADR-0012](../../adr/0012-split-dev-ml-workspaces.md)), serving,
-application, orchestration — is instantiated per environment
+workspace ([ADR-0012](../../adr/0012-split-dev-ml-workspaces.md)), data
+workspace ([ADR-0015](../../adr/0015-data-engineering-workspace.md)),
+serving, application, orchestration — is instantiated per environment
 ([ADR-0005](../../adr/0005-two-environments.md)); the data layer is shared
 and zoned ([ADR-0006](../../adr/0006-shared-zoned-data-layer.md));
 registries, trust and operation bands are per-tenant and cross-environment.
@@ -79,8 +80,6 @@ From commit to production — registries are the only path in:
 
 - [ADR-0014](../../adr/0014-data-layer-storage-layers.md) — layered storage
   (time-series, multimodal lakehouse, derived serving stores).
-- [ADR-0015](../../adr/0015-data-engineering-workspace.md) — a third (data
-  engineering) workspace and a modeled pipeline promotion path.
 
 Diagrams above show the model as currently decided; they re-render when a
 proposal is accepted.

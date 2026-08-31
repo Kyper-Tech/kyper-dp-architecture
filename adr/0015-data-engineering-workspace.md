@@ -2,7 +2,7 @@
 id: ADR-0015
 status: proposed
 date: 2026-08-31
-affects: [KYP-T-ORCH, KYP-T-REG-02]
+affects: [KYP-T-DATAWS, KYP-T-ORCH, KYP-T-REG-02]
 ---
 # Data engineering gets its own workspace and a modeled pipeline promotion path
 
@@ -19,7 +19,8 @@ exactly as the app-runtime path does.
 
 ## Decision
 1. A third workspace area in the environment container:
-   Data workspace (KYP-T-DATAWS) — boundary rule: ephemeral, nothing
+   Data workspace (KYP-T-DATAWS, elements KYP-T-DATAWS-01..04) — boundary
+   rule: ephemeral, nothing
    durable; hands off only to source and artifact repos (pipeline code,
    transform images, contract and quality-rule definitions); reads raw and
    curated under audited grants, for pipeline development only.
