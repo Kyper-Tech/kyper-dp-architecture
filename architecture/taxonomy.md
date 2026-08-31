@@ -41,6 +41,24 @@ it is not a kind itself. external is neither: it is an outside actor.
   online = low-latency serving reads
 - optional ∈ {true} — component deployed only at some sites (edge)
 
+## Bindings (architecture/bindings/*.yaml)
+Bindings live outside the model and connect three things the taxonomy
+already has: a component (by KYP-ID), the tenantClass axis, and a product.
+
+- contract — the promise a component states in the model (e.g. an
+  S3-compatible object API). The only thing other components may depend on.
+- contract profile — the explicit definition of a contract: `required`
+  operations/semantics components may rely on, and `not-relied-upon` ones
+  they must not. A product may bind only if it satisfies every required row.
+- binding — the mapping contract x tenantClass -> product + posture, keyed
+  by the component's KYP-ID. The only place products are ever named.
+- product — a concrete technology fulfilling a contract. NEVER appears in
+  the model (ADR-0007); swapping one touches bindings + an ADR, not the model.
+- posture — the operational stance of a binding (managed-regional, self-run,
+  self-run-operator).
+
+Per-tenant resolution of a binding lives in the control-plane tenant registry.
+
 ## ID scheme
 KYP-<plane>-<AREA>-<nn>   plane ∈ {C, T, E}; AREA is the area slug; nn two digits.
 Area-level IDs omit nn (KYP-T-DATA). IDs are immutable; renames keep the ID.
