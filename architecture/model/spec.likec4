@@ -1,0 +1,61 @@
+specification {
+  element plane {
+    style {
+      color muted
+      opacity 8%
+    }
+  }
+  element area {
+    style {
+      color gray
+      opacity 20%
+    }
+  }
+  element service
+  element store {
+    style {
+      shape storage
+      color green
+    }
+  }
+  element registry {
+    style {
+      shape cylinder
+      color indigo
+    }
+  }
+  element boundary {
+    style {
+      shape queue
+      color amber
+    }
+  }
+  element external {
+    style {
+      color gray
+    }
+  }
+
+  relationship publishesTo {
+    line solid
+  }
+  relationship readsVia {
+    line solid
+  }
+  relationship servesTo {
+    color green
+    line solid
+  }
+  relationship syncsWith {
+    color amber
+    line dashed
+  }
+  relationship enforces {
+    color red
+    line dotted
+  }
+  relationship schedules {
+    color secondary
+    line dotted
+  }
+}

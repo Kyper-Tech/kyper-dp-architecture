@@ -1,0 +1,124 @@
+model {
+  tenant = plane 'Tenant plane' {
+    description 'One per customer. Pulls from control plane.'
+    metadata { kypId 'KYP-T'; adr 'ADR-0002' }
+
+    // ---- Environment container: instantiated per env axis (nonprod, prod) — ADR-0005
+    workspaces = area 'Workspaces' {
+      description 'Profiles dev / ML. Holds nothing durable.'
+      metadata { kypId 'KYP-T-WS'; envScoped 'true'; adr 'ADR-0004,ADR-0008' }
+      sessions   = service 'Sessions'        { metadata { kypId 'KYP-T-WS-01' } }
+      jobs       = service 'Jobs'            { metadata { kypId 'KYP-T-WS-02' } }
+      envImages  = service 'Environments'    { metadata { kypId 'KYP-T-WS-03' } }
+      scratch    = service 'Scratch runtime' { metadata { kypId 'KYP-T-WS-04' } }
+    }
+
+    serving = area 'Serving' {
+      description 'Stateless. Models in from registry, predictions out to storage.'
+      metadata { kypId 'KYP-T-SRV'; envScoped 'true' }
+      modelRuntime = service 'Model runtime'     { metadata { kypId 'KYP-T-SRV-01' } }
+      retrieval    = service 'Retrieval'         { metadata { kypId 'KYP-T-SRV-02' } }
+      gateway      = service 'Inference gateway' { metadata { kypId 'KYP-T-SRV-03' } }
+      drift        = service 'Drift monitor'     { metadata { kypId 'KYP-T-SRV-04' } }
+    }
+
+    application = area 'Application' {
+      metadata { kypId 'KYP-T-APP'; envScoped 'true' }
+      appRuntime = service 'App runtime'     { metadata { kypId 'KYP-T-APP-01' } }
+      apiGateway = service 'API gateway'     { metadata { kypId 'KYP-T-APP-02' } }
+      alerting   = service 'Alerting'        { metadata { kypId 'KYP-T-APP-03'; adr 'ADR-0010' } }
+      ingress    = boundary 'Public ingress' { metadata { kypId 'KYP-T-APP-04' } }
+    }
+
+    orchestration = area 'Orchestration' {
+      description 'One scheduler per environment; owns all recurring work.'
+      metadata { kypId 'KYP-T-ORCH'; envScoped 'true' }
+      scheduler = service 'Scheduler' {
+        description 'Ingest, transform, scoring, retraining trigger, idle scale'
+        metadata { kypId 'KYP-T-ORCH-01' }
+      }
+    }
+
+    // ---- Data layer: shared across environments, zoned — ADR-0006
+    data = area 'Data layer' {
+      description 'All durable state. Mediated access only. Shared across envs, zoned.'
+      metadata { kypId 'KYP-T-DATA'; shared 'across-envs'; adr 'ADR-0006' }
+
+      otGateway   = boundary 'OT gateway'   { metadata { kypId 'KYP-T-DATA-10' } }
+      connectors  = service 'Connectors'    { metadata { kypId 'KYP-T-DATA-11' } }
+      contracts   = service 'Data contracts'{ metadata { kypId 'KYP-T-DATA-12' } }
+      streams     = service 'Streams'       { metadata { kypId 'KYP-T-DATA-13' } }
+
+      objectStore = store 'Object store' {
+        technology 'S3-compatible object API'
+        metadata { kypId 'KYP-T-DATA-01'; class 'analytical'; adr 'ADR-0007' }
+      }
+      tables      = store 'Tables'               { metadata { kypId 'KYP-T-DATA-02'; class 'analytical' } }
+      opDb        = store 'Operational database' { metadata { kypId 'KYP-T-DATA-03'; class 'operational' } }
+      indexes     = store 'Indexes'              { metadata { kypId 'KYP-T-DATA-04'; class 'online' } }
+      predictions = store 'Predictions'          { metadata { kypId 'KYP-T-DATA-07'; class 'analytical' } }
+
+      catalog     = service 'Catalog'        { metadata { kypId 'KYP-T-DATA-05' } }
+      queryEngine = service 'Query engine'   { metadata { kypId 'KYP-T-DATA-06' } }
+      lineage     = service 'Lineage'        { metadata { kypId 'KYP-T-DATA-20' } }
+      quality     = service 'Quality'        { metadata { kypId 'KYP-T-DATA-21' } }
+      zones       = service 'Env zones'      { metadata { kypId 'KYP-T-DATA-22' } }
+      classification = service 'Classification' { metadata { kypId 'KYP-T-DATA-23' } }
+      retention   = service 'Retention, tiering' { metadata { kypId 'KYP-T-DATA-24' } }
+      accessPolicy = service 'Access policy' { metadata { kypId 'KYP-T-DATA-25' } }
+    }
+
+    // ---- Per-tenant, cross-environment bands
+    registries = area 'Registries' {
+      description 'The only handoff seam. Immutable, versioned.'
+      metadata { kypId 'KYP-T-REG'; adr 'ADR-0004' }
+      sourceRepo    = registry 'Source repo'    { metadata { kypId 'KYP-T-REG-01' } }
+      artifactRepo  = registry 'Artifact repo'  { metadata { kypId 'KYP-T-REG-02' } }
+      modelRegistry = registry 'Model registry' { metadata { kypId 'KYP-T-REG-03' } }
+      experiments   = registry 'Experiments'    { metadata { kypId 'KYP-T-REG-04' } }
+    }
+
+    trust = area 'Trust services' {
+      metadata { kypId 'KYP-T-TRUST' }
+      identity  = service 'Identity: human, workload, device' { metadata { kypId 'KYP-T-TRUST-01' } }
+      secrets   = service 'Secrets'        { metadata { kypId 'KYP-T-TRUST-02' } }
+      keys      = service 'Keys'           { metadata { kypId 'KYP-T-TRUST-03' } }
+      admission = service 'Admission'      { metadata { kypId 'KYP-T-TRUST-04' } }
+      audit     = service 'Audit trail'    { metadata { kypId 'KYP-T-TRUST-05' } }
+      netPolicy = service 'Network policy' { metadata { kypId 'KYP-T-TRUST-06' } }
+    }
+
+    ops = area 'Operation services' {
+      metadata { kypId 'KYP-T-OPS' }
+      cicd          = service 'CI/CD'          { metadata { kypId 'KYP-T-OPS-01' } }
+      observability = service 'Observability'  { metadata { kypId 'KYP-T-OPS-02' } }
+      synthetics    = service 'Synthetics'     { metadata { kypId 'KYP-T-OPS-03' } }
+      incidents     = service 'Incidents, SLOs'{ metadata { kypId 'KYP-T-OPS-04' } }
+      scanning      = service 'Scanning'       { metadata { kypId 'KYP-T-OPS-05' } }
+      backupDr      = service 'Backup, DR'     { metadata { kypId 'KYP-T-OPS-06' } }
+      metering      = service 'Metering'       { metadata { kypId 'KYP-T-OPS-07' } }
+    }
+
+    syncLayer = boundary 'Sync layer' {
+      description 'Message transport, artifact transfer, offline queue, traffic priority per link class'
+      metadata { kypId 'KYP-T-SYNC-01'; adr 'ADR-0003' }
+    }
+  }
+
+  // ---- Relations (dependency-level; interaction semantics belong in runtime views)
+  tenant.workspaces.jobs      -[readsVia]->    tenant.data.catalog       'training reads'
+  tenant.workspaces.jobs      -[publishesTo]-> tenant.registries.modelRegistry 'model versions'
+  tenant.workspaces.jobs      -[publishesTo]-> tenant.registries.artifactRepo  'images, packages'
+  tenant.registries.modelRegistry -[servesTo]-> tenant.serving.modelRuntime   'promoted models'
+  tenant.ops.cicd             -[servesTo]->    tenant.application.appRuntime  'promoted artifacts'
+  tenant.serving.modelRuntime -[readsVia]->    tenant.data.catalog       'feature reads'
+  tenant.serving.modelRuntime -[publishesTo]-> tenant.data.predictions   'predictions'
+  tenant.serving.drift        -[readsVia]->    tenant.data.queryEngine   'prod-labelled predictions'
+  tenant.application.appRuntime -[readsVia]->  tenant.data.queryEngine   'curated tables'
+  tenant.application.appRuntime -[readsVia]->  tenant.serving.gateway    'inference'
+  tenant.orchestration.scheduler -[schedules]-> tenant.data.connectors   'ingest'
+  tenant.orchestration.scheduler -[schedules]-> tenant.workspaces.jobs   'retraining'
+  tenant.trust.admission      -[enforces]->    tenant.application.appRuntime 'signed artifacts only'
+  tenant.trust.admission      -[enforces]->    tenant.serving.modelRuntime   'signed models only'
+  tenant.data.accessPolicy    -[enforces]->    tenant.data.catalog       'zone grants'
+}

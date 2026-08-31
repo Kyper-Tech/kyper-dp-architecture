@@ -1,0 +1,114 @@
+views {
+  view index {
+    title 'Kyper platform — planes'
+    include control, tenant, edge
+    rank source { control }
+    rank sink { edge }
+    autoLayout TopBottom
+  }
+  view tenantOverview of tenant {
+    title 'Tenant plane — areas'
+    group 'Environment container — instantiated per env (nonprod, prod)' {
+      color muted
+      opacity 10%
+      border dashed
+      include workspaces, serving, application, orchestration
+    }
+    group 'Shared across environments' {
+      color green
+      opacity 10%
+      border dashed
+      include data
+    }
+    group 'Per-tenant, cross-environment bands' {
+      color gray
+      opacity 10%
+      border dashed
+      include registries, trust, ops
+    }
+    rank sink { data }
+    autoLayout TopBottom
+    style workspaces {
+      color indigo
+    }
+    style serving, application {
+      color red
+    }
+    style data {
+      color green
+    }
+    style registries {
+      color indigo
+    }
+    style orchestration, trust, ops {
+      color gray
+    }
+  }
+  view dataLayer of tenant.data {
+    title 'Data layer — ingestion, storage, management'
+    group 'Ingestion' {
+      color amber
+      opacity 10%
+      border dashed
+      include otGateway, connectors, contracts, streams
+    }
+    group 'Storage' {
+      color green
+      opacity 10%
+      border dashed
+      include objectStore, tables, opDb, indexes, predictions
+    }
+    group 'Data management' {
+      color gray
+      opacity 10%
+      border dashed
+      include catalog, queryEngine, lineage, quality, zones, classification, retention, accessPolicy
+    }
+    autoLayout TopBottom
+  }
+  view handoffSeams {
+    title 'Producers, registries, runtimes'
+    group 'Producers' {
+      color indigo
+      opacity 10%
+      border dashed
+      include tenant.workspaces.*, tenant.ops.cicd
+    }
+    group 'Registries — the only handoff seam' {
+      color indigo
+      opacity 15%
+      border solid
+      include tenant.registries.*
+    }
+    group 'Runtimes' {
+      color red
+      opacity 10%
+      border dashed
+      include tenant.serving.*, tenant.application.*
+    }
+    autoLayout LeftRight
+    style tenant.workspaces.* {
+      color indigo
+    }
+    style tenant.serving.*, tenant.application.* {
+      color red
+    }
+  }
+  view edgePlane of edge {
+    title 'Edge plane and sync boundary'
+    include *, tenant.syncLayer
+    rank source { tenant.syncLayer }
+    autoLayout TopBottom
+    style app, orchestration {
+      color secondary
+    }
+  }
+  view trustBoundaries {
+    title 'Trust boundaries and enforcement'
+    include element.kind = boundary, tenant.trust.*
+    autoLayout LeftRight
+    style tenant.trust.* {
+      color red
+    }
+  }
+}

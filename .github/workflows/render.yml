@@ -1,0 +1,25 @@
+name: architecture-gate
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci                                   # pins likec4 version via package.json
+      - run: npx likec4 build architecture/model -o site   # fails on unknown kinds/relations
+      - run: python3 scripts/check_adr_links.py
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+  publish:
+    needs: gate
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions: { pages: write, id-token: write }
+    environment: { name: github-pages }
+    steps:
+      - uses: actions/deploy-pages@v4

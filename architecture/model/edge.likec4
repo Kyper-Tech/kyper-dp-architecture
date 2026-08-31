@@ -1,0 +1,42 @@
+model {
+  edge = plane 'Edge plane' {
+    description 'Optional, per site. Never trains, never owns the catalog.'
+    metadata { kypId 'KYP-E' }
+
+    runtime = area 'Runtime' {
+      metadata { kypId 'KYP-E-RT' }
+      inference   = service 'Inference'          { metadata { kypId 'KYP-E-RT-01' } }
+      preprocess  = service 'Preprocess, filter' { metadata { kypId 'KYP-E-RT-02' } }
+      buffer      = store 'Store and forward' {
+        description 'Intentional co-location of state and behaviour outside the data layer'
+        metadata { kypId 'KYP-E-RT-03'; class 'operational' }
+      }
+      localAlerts = service 'Local alerting'     { metadata { kypId 'KYP-E-RT-04'; adr 'ADR-0010' } }
+    }
+
+    site = area 'Site services' {
+      metadata { kypId 'KYP-E-SITE' }
+      updateAgent = service 'Update agent'            { metadata { kypId 'KYP-E-SITE-01' } }
+      deviceId    = service 'Identity, attestation'   { metadata { kypId 'KYP-E-SITE-02' } }
+      timeSync    = service 'Time sync'               { metadata { kypId 'KYP-E-SITE-03' } }
+      netServices = service 'Network services'        { metadata { kypId 'KYP-E-SITE-04' } }
+    }
+
+    app = area 'Application' {
+      metadata { kypId 'KYP-E-APP'; optional 'true' }
+      operatorUi = service 'Operator UI' { metadata { kypId 'KYP-E-APP-01' } }
+      localApi   = service 'Local API'   { metadata { kypId 'KYP-E-APP-02' } }
+    }
+
+    orchestration = area 'Orchestration' {
+      description 'Schedules only what must survive disconnection'
+      metadata { kypId 'KYP-E-ORCH'; optional 'true' }
+      localScheduler = service 'Local schedules' { metadata { kypId 'KYP-E-ORCH-01' } }
+    }
+  }
+
+  edge.runtime.buffer      -[syncsWith]-> tenant.syncLayer 'telemetry, inference results'
+  edge.site.updateAgent    -[syncsWith]-> tenant.syncLayer 'signed model and config bundles'
+  edge.runtime.localAlerts -[syncsWith]-> tenant.syncLayer 'ack sync upward'
+  edge.site.deviceId       -[syncsWith]-> tenant.syncLayer 'enrollment, attestation'
+}

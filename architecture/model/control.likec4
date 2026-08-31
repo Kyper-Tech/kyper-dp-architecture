@@ -1,0 +1,32 @@
+model {
+  control = plane 'Control plane' {
+    description 'One instance, Kyper operated. Never initiates into a tenant.'
+    metadata { kypId 'KYP-C'; adr 'ADR-0001' }
+
+    fleetConfig = service 'Fleet config' {
+      description 'Tenant registry + desired state per tenant'
+      metadata { kypId 'KYP-C-FLEET-01'; adr 'ADR-0001' }
+    }
+    goldenArtifacts = registry 'Artifact registry (golden)' {
+      description 'Signed images, charts, packages with SBOM'
+      metadata { kypId 'KYP-C-FLEET-02'; adr 'ADR-0001' }
+    }
+    releaseControl = service 'Release control' {
+      metadata { kypId 'KYP-C-FLEET-03' }
+    }
+    staffIdentity = boundary 'Staff identity federation' {
+      metadata { kypId 'KYP-C-TRUST-01' }
+    }
+    fleetHealth = service 'Fleet health aggregation' {
+      metadata { kypId 'KYP-C-OPS-01' }
+    }
+    tenantLifecycle = service 'Tenant lifecycle' {
+      description 'GAP: provision, suspend, offboard with data export'
+      metadata { kypId 'KYP-C-FLEET-04'; status 'gap' }
+    }
+  }
+
+  // ---- Pull-only delivery downward (ADR-0001): tenant initiates, control never does.
+  control.goldenArtifacts -[servesTo]-> tenant.ops.cicd 'signed golden releases (tenant pulls)'
+  tenant.ops.cicd -[readsVia]-> control.fleetConfig 'desired state, version pins (pull)'
+}

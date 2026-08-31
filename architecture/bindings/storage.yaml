@@ -1,0 +1,14 @@
+# Contract -> product bindings per tenant class. Products never enter model/.
+# Per-tenant resolution lives in the control-plane tenant registry.
+KYP-T-DATA-01:
+  contract: s3-object-api
+  bindings:
+    cloud-gcp: { product: GCS,   posture: managed-regional }
+    cloud-aws: { product: S3,    posture: managed-regional }
+    onprem:    { product: TBD,   posture: self-run, adr: ADR-0007, note: "decide MinIO vs Ceph RGW" }
+KYP-T-DATA-03:
+  contract: postgres-wire
+  bindings:
+    cloud-gcp: { product: TBD, posture: managed }
+    cloud-aws: { product: TBD, posture: managed }
+    onprem:    { product: TBD, posture: self-run-operator }
