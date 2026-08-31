@@ -1,8 +1,8 @@
 ---
 id: ADR-0004
-status: accepted
+status: proposed
 date: 2026-08-31
-affects: [KYP-T-REG, KYP-T-WS]
+affects: [KYP-T-REG, KYP-T-DEVWS, KYP-T-MLWS]
 ---
 # Registries are the only handoff between producers and runtimes; spaces hold nothing durable
 ## Context

@@ -48,7 +48,7 @@ either.
 
 ## Rejected options — do not propose these again
 - three environments (dev / stage / prod)          -> ADR-0005
-- dev space and ML space as sibling subsystems     -> ADR-0008 (profiles of one workspace)
+- one workspace subsystem with dev/ML profiles     -> ADR-0012 (dev and ML are separate areas)
 - source repo / artifact repo / model registry inside a space -> ADR-0004
 - product names at component level                 -> ADR-0007
 - "message broker" as the named edge boundary      -> ADR-0003 (generic sync layer)

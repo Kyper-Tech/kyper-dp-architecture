@@ -1,6 +1,6 @@
 ---
 id: ADR-0010
-status: accepted
+status: proposed
 date: 2026-08-31
 affects: [KYP-T-APP-03, KYP-E-RT-04]
 ---

@@ -39,7 +39,7 @@ this section states only the goals and their drivers.
 |---|---|---|
 | Customer (data owner) | Sovereignty, isolation, export on offboarding | tenant plane; lifecycle gap tracked in [design brief — open decisions](../design-brief.md#open-decisions) |
 | Plant / OT operations | Local inference and alerting despite dead WAN | edge plane, [ADR-0010](../../adr/0010-alerting-authority.md) |
-| Data scientists / developers | One workspace, dev and ML profiles | [ADR-0008](../../adr/0008-unified-workspaces.md) |
+| Data scientists / developers | Separate dev and ML workspaces — different tooling, processes and data scope | [ADR-0012](../../adr/0012-split-dev-ml-workspaces.md) |
 | Kyper operations | Operate a fleet of tenant silos from one control plane | control plane ([ADR-0001](../../adr/0001-three-planes-pull-only.md)) |
 | Security reviewers | Trust boundaries as named components; zone model | placement rules in [CLAUDE.md](../../CLAUDE.md); [analysis plan](../analysis-plan.md) phase 3 |
 | Business / non-git audience | Discoverable narrative without Git access | Notion portal, links only ([ADR-0009](../../adr/0009-architecture-toolchain.md)) |

@@ -25,10 +25,12 @@ connectivity classes; enabled modules; version pins.
 ### Environment container — instantiated as nonprod and prod (ADR-0005)
 Holds: Workspaces, Serving, Application, Orchestration.
 
-Workspaces (one subsystem, profiles dev / ML; analyst profile later) — ADR-0008
-  Sessions · Jobs · Environments (pinned images) · Scratch runtime
-  Profile differences are policy only: data scope, publish target, compute quota.
-  Spaces hold nothing durable (ADR-0004).
+Dev workspace — Sessions · Build/test jobs · Environment images · Scratch runtime
+  Hands off only to source/artifact repos; curated-zone data scope. — ADR-0012
+ML workspace — Notebook sessions · Training jobs · Environment images · Scratch runtime
+  Hands off only to model registry + experiments; classified/raw reads under
+  audited grants. — ADR-0012
+  Both workspaces hold nothing durable (ADR-0004).
 Serving — Model runtime · Retrieval · Inference gateway · Drift monitor (stateless)
 Application — App runtime · API gateway · Alerting (authority) · Public ingress
 Orchestration — Ingest · Transform · Scoring · Retraining trigger · Idle scale
@@ -82,7 +84,7 @@ rehearsal = nonprod run against curated read-only.
 - Semantic layer above query engine (only if >1 consumer defines same KPI)
 - Availability targets per stateful component; DR targets (RPO/RTO) per tenant class
 - Tenant lifecycle (provision/suspend/offboard with data export) in control plane
-- Analyst workspace profile
+- Analyst workspace (own area vs a home inside dev workspace)
 - Federated learning across tenants (future option; keep compatible, do not build)
 
 ## Standards to map against (see docs/analysis-plan.md)

@@ -4,13 +4,22 @@ model {
     metadata { kypId 'KYP-T'; adr 'ADR-0002' }
 
     // ---- Environment container: instantiated per env axis (nonprod, prod) — ADR-0005
-    workspaces = area 'Workspaces' {
-      description 'Profiles dev / ML. Holds nothing durable.'
-      metadata { kypId 'KYP-T-WS'; envScoped 'true'; adr 'ADR-0004,ADR-0008' }
-      sessions   = service 'Sessions'        { metadata { kypId 'KYP-T-WS-01' } }
-      jobs       = service 'Jobs'            { metadata { kypId 'KYP-T-WS-02' } }
-      envImages  = service 'Environments'    { metadata { kypId 'KYP-T-WS-03' } }
-      scratch    = service 'Scratch runtime' { metadata { kypId 'KYP-T-WS-04' } }
+    devws = area 'Dev workspace' {
+      description 'Ephemeral, nothing durable. Hands off only to source/artifact repos; curated-zone data scope.'
+      metadata { kypId 'KYP-T-DEVWS'; envScoped 'true'; adr 'ADR-0004,ADR-0012' }
+      sessions  = service 'Sessions'           { metadata { kypId 'KYP-T-DEVWS-01' } }
+      buildJobs = service 'Build, test jobs'   { metadata { kypId 'KYP-T-DEVWS-02' } }
+      envImages = service 'Environment images' { metadata { kypId 'KYP-T-DEVWS-03' } }
+      scratch   = service 'Scratch runtime'    { metadata { kypId 'KYP-T-DEVWS-04' } }
+    }
+
+    mlws = area 'ML workspace' {
+      description 'Ephemeral, nothing durable. Hands off only to model registry and experiments; classified/raw reads under audited grants.'
+      metadata { kypId 'KYP-T-MLWS'; envScoped 'true'; adr 'ADR-0004,ADR-0012' }
+      notebooks    = service 'Notebook sessions'  { metadata { kypId 'KYP-T-MLWS-01' } }
+      trainingJobs = service 'Training jobs'      { metadata { kypId 'KYP-T-MLWS-02' } }
+      envImages    = service 'Environment images' { metadata { kypId 'KYP-T-MLWS-03' } }
+      scratch      = service 'Scratch runtime'    { metadata { kypId 'KYP-T-MLWS-04' } }
     }
 
     serving = area 'Serving' {
@@ -106,9 +115,11 @@ model {
   }
 
   // ---- Relations (dependency-level; interaction semantics belong in runtime views)
-  tenant.workspaces.jobs      -[readsVia]->    tenant.data.catalog       'training reads'
-  tenant.workspaces.jobs      -[publishesTo]-> tenant.registries.modelRegistry 'model versions'
-  tenant.workspaces.jobs      -[publishesTo]-> tenant.registries.artifactRepo  'images, packages'
+  tenant.mlws.trainingJobs    -[readsVia]->    tenant.data.catalog       'training reads (incl. audited raw grants)'
+  tenant.mlws.trainingJobs    -[publishesTo]-> tenant.registries.modelRegistry 'model versions'
+  tenant.mlws.trainingJobs    -[publishesTo]-> tenant.registries.experiments   'evaluation records'
+  tenant.devws.sessions       -[publishesTo]-> tenant.registries.sourceRepo    'commits'
+  tenant.devws.buildJobs      -[publishesTo]-> tenant.registries.artifactRepo  'images, packages'
   tenant.registries.modelRegistry -[servesTo]-> tenant.serving.modelRuntime   'promoted models'
   tenant.ops.cicd             -[servesTo]->    tenant.application.appRuntime  'promoted artifacts'
   tenant.serving.modelRuntime -[readsVia]->    tenant.data.catalog       'feature reads'
@@ -117,7 +128,7 @@ model {
   tenant.application.appRuntime -[readsVia]->  tenant.data.queryEngine   'curated tables'
   tenant.application.appRuntime -[readsVia]->  tenant.serving.gateway    'inference'
   tenant.orchestration.scheduler -[schedules]-> tenant.data.connectors   'ingest'
-  tenant.orchestration.scheduler -[schedules]-> tenant.workspaces.jobs   'retraining'
+  tenant.orchestration.scheduler -[schedules]-> tenant.mlws.trainingJobs 'retraining'
   tenant.trust.admission      -[enforces]->    tenant.application.appRuntime 'signed artifacts only'
   tenant.trust.admission      -[enforces]->    tenant.serving.modelRuntime   'signed models only'
   tenant.data.accessPolicy    -[enforces]->    tenant.data.catalog       'zone grants'

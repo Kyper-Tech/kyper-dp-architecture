@@ -12,7 +12,7 @@ views {
       color muted
       opacity 10%
       border dashed
-      include workspaces, serving, application, orchestration
+      include devws, mlws, serving, application, orchestration
     }
     group 'Shared across environments' {
       color green
@@ -28,7 +28,7 @@ views {
     }
     rank sink { data }
     autoLayout TopBottom
-    style workspaces {
+    style devws, mlws {
       color indigo
     }
     style serving, application {
@@ -72,7 +72,7 @@ views {
       color indigo
       opacity 10%
       border dashed
-      include tenant.workspaces.*, tenant.ops.cicd
+      include tenant.devws.*, tenant.mlws.*, tenant.ops.cicd
     }
     group 'Registries — the only handoff seam' {
       color indigo
@@ -87,7 +87,7 @@ views {
       include tenant.serving.*, tenant.application.*
     }
     autoLayout LeftRight
-    style tenant.workspaces.* {
+    style tenant.devws.*, tenant.mlws.* {
       color indigo
     }
     style tenant.serving.*, tenant.application.* {

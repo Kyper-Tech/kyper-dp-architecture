@@ -25,7 +25,7 @@ Trust boundaries view:
 ## Scope
 
 **In scope:** control plane (fleet, golden artifacts, release control), tenant
-plane (workspaces, serving, application, orchestration, data layer,
+plane (dev and ML workspaces, serving, application, orchestration, data layer,
 registries, trust and operation bands), edge plane (runtime, site services,
 optional application and orchestration).
 

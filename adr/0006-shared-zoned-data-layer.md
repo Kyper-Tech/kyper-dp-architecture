@@ -1,6 +1,6 @@
 ---
 id: ADR-0006
-status: accepted
+status: proposed
 date: 2026-08-31
 affects: [KYP-T-DATA, KYP-T-DATA-22, KYP-T-DATA-25]
 ---

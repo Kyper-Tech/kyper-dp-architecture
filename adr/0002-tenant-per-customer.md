@@ -1,6 +1,6 @@
 ---
 id: ADR-0002
-status: accepted
+status: proposed
 date: 2026-08-31
 affects: [KYP-T]
 ---
