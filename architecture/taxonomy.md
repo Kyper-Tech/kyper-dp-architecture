@@ -1,6 +1,11 @@
 # Taxonomy — v1 (changing this file requires an ADR)
 
 ## Element kinds
+Two levels. Groupings (plane, area) organize and own no runtime identity.
+Components (service, store, registry, boundary) are the leaf elements that
+exist at runtime. "Component" is the collective term for the leaf kinds —
+it is not a kind itself. external is neither: it is an outside actor.
+
 - plane    — top-level operational domain with its own trust posture and instancing rule
              (control, tenant, edge). Exactly three exist.
 - area     — grouping of components inside a plane sharing ONE boundary rule and one
