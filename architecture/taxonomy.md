@@ -155,3 +155,35 @@ is resolved in the control-plane tenant registry.
 
 ## 10. Placement rules
 See CLAUDE.md "Placement rules" — normative here by reference.
+
+## Appendix A — anchoring to standard vocabularies
+This taxonomy invents a term only where it carries a rule no standard term
+carries; everything else anchors to an existing vocabulary. ≈ means
+"nearest standard term"; the *differs* note is what our rule adds. New
+terms are admitted only under that test.
+
+| Kyper term | ≈ standard term | Source | Differs |
+|---|---|---|---|
+| plane | control / data / management plane | networking, Kubernetes usage | ours adds an instancing rule per plane |
+| area | grouping / package | ArchiMate grouping, UML package | exactly one boundary rule required |
+| component | component | UML, C4 | collective term for the four leaf kinds |
+| service | service | C4 container, ArchiMate application service | must be stateless |
+| store | data store | C4, ArchiMate data object | must live in the data layer |
+| registry | registry | industry term | write-once; CI/CD-only read; staged promotion |
+| boundary | conduit | IEC 62443 zones & conduits | reified as a model element both sides reference |
+| zone | zone | IEC 62443; raw/curated conventions | exactly one access rule per zone |
+| contract | interface | UML interface, ArchiMate application interface | the only dependable surface of a component |
+| contract profile | interface specification | UML | explicit required / not-relied-upon rows |
+| binding, product | realization | UML/ArchiMate realization | keyed by KYP-ID x tenantClass; products banned from the model |
+| servesTo | serving | ArchiMate serving | source must be a registry |
+| readsVia | access (read) | ArchiMate access | must pass through a mediator service |
+| publishesTo | access (write) / flow | ArchiMate | target must be registry or store; versioned |
+| schedules | triggering | ArchiMate triggering | one orchestrator per environment |
+| syncsWith | flow through a conduit | ArchiMate flow + IEC 62443 | may only terminate on a boundary |
+| enforces | — (policy application) | nearest: ArchiMate realization of a requirement | none close; kept as ours |
+| axis | (architecture) viewpoint dimension | ISO/IEC/IEEE 42010 spirit | axis values are metadata, never elements |
+| instance | instance specification | UML | instances never appear in the model |
+| environment container, band | — | none | genuinely ours: they carry the instancing rules |
+
+Phase 1 of docs/analysis-plan.md (terminology map to ISO/IEC 23053 and IIRA)
+extends this table downward from metamodel terms to the components themselves.
