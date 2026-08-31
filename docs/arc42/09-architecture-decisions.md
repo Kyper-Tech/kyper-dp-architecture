@@ -16,6 +16,7 @@ Never re-open an accepted decision without a new ADR.
 | [ADR-0008](../../adr/0008-unified-workspaces.md) | One workspace subsystem, dev/ML profiles | KYP-T-WS |
 | [ADR-0009](../../adr/0009-architecture-toolchain.md) | Taxonomy + arc42 + LikeC4 + CI gate; Notion links only | — |
 | [ADR-0010](../../adr/0010-alerting-authority.md) | Tenant alerting authoritative; edge is a replica | KYP-T-APP-03, KYP-E-RT-04 |
+| [ADR-0011](../../adr/0011-onprem-object-store-seaweedfs.md) | On-prem object store binding: SeaweedFS | KYP-T-DATA-01, KYP-T-DATA-25 |
 
 Rejected options that must not be re-proposed are listed in
 [CLAUDE.md](../../CLAUDE.md) ("Rejected options") with the ADR that closed
