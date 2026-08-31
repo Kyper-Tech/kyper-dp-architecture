@@ -1,6 +1,10 @@
 # Kyper platform architecture — design brief (v13, 2026-08-31)
 
-Component level, capability names only. Products are bindings, not components.
+Component level, capability names only. Products are bindings, not components
+([ADR-0007](../adr/0007-object-store-contract-bindings.md)): the model states
+the contract a component promises; the concrete product fulfilling it per
+tenant class lives in [architecture/bindings/](../architecture/bindings/),
+keyed by KYP-ID x tenant class.
 
 ## Planes
 | Plane | Instances | Operated by | Network direction |
