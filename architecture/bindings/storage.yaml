@@ -1,14 +1,65 @@
 # Contract -> product bindings per tenant class. Products never enter model/.
 # Per-tenant resolution lives in the control-plane tenant registry.
+#
+# Contract profiles define what a contract actually promises: the operations
+# and semantics platform components may depend on. A product may bind to a
+# contract only if it satisfies every `required` row — natively or via a
+# documented compatibility endpoint. Components MUST NOT depend on anything
+# listed under `not-relied-upon`; that is where bound products differ.
+
+contract-profiles:
+  s3-object-api:
+    adr: ADR-0007
+    required:
+      - object CRUD (PUT/GET/DELETE) and prefix LIST
+      - ranged (partial) reads
+      - multipart upload
+      - presigned URLs (SigV4 or equivalent)
+      - per-zone access control expressible in the store's own IAM
+        (curated zone writable only by prod orchestration identity — ADR-0006,
+        enforced via access policy KYP-T-DATA-25 over env zones KYP-T-DATA-22)
+      - server-side encryption at rest
+    not-relied-upon:
+      - S3 versioning API (point-in-time recovery is the backup band's concern)
+      - object tagging via S3 API (classification lives in the catalog, KYP-T-DATA-05)
+      - S3 bucket policy documents (zone grants are KYP-T-DATA-25's concern)
+      - ETag == MD5 (integrity checks must use explicit checksums)
+      - S3 Select, event notifications via S3 API
+    notes: >
+      cloud-gcp satisfies the profile partly natively (gs:// connectors for
+      the data stack) and partly via the S3 interoperability endpoint
+      (HMAC keys + SigV4). cloud-aws and onprem candidates are S3-wire.
+
+  postgres-wire:
+    adr: ADR-0007
+    required:
+      - PostgreSQL wire protocol and SQL dialect for the operational schema
+      - transactional consistency (single-node ACID is sufficient)
+      - TLS in transit; encryption at rest
+    not-relied-upon:
+      - product-specific extensions (must be declared here before any
+        component may use one)
+
 KYP-T-DATA-01:
   contract: s3-object-api
   bindings:
     cloud-gcp: { product: GCS,   posture: managed-regional }
     cloud-aws: { product: S3,    posture: managed-regional }
-    onprem:    { product: TBD,   posture: self-run, adr: ADR-0007, note: "decide MinIO vs Ceph RGW" }
+    onprem:    { product: SeaweedFS, posture: self-run, adr: ADR-0011,
+                 note: "SeaweedFS IAM is coarser than S3/RGW, so the
+                        curated-zone write rule (ADR-0006) is enforced via
+                        dedicated identities plus access policy mediation
+                        (KYP-T-DATA-25). Block storage for the operational
+                        DB comes from a separate CSI — no object store
+                        double-duty." }
 KYP-T-DATA-03:
   contract: postgres-wire
   bindings:
+    # Postgres does not run on object storage; S3-backed Postgres engines
+    # exist only as managed/commercial offerings. Self-run Postgres needs
+    # block volumes (PVCs) from a CSI independent of the object store.
     cloud-gcp: { product: TBD, posture: managed }
     cloud-aws: { product: TBD, posture: managed }
-    onprem:    { product: TBD, posture: self-run-operator }
+    onprem:    { product: TBD, posture: self-run-operator,
+                 note: "operator on block PVCs; CSI choice is a separate
+                        binding decision (object store gives no block)" }
