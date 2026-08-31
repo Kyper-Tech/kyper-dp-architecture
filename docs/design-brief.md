@@ -70,7 +70,7 @@ Neither plane holds an address of a service in the other.
 
 | Area | Contains | Rule |
 |---|---|---|
-| Runtime | Inference, preprocess/filter, store-and-forward, local alerting | Alerting is a replica: acks sync upward, tenant alerting authoritative (ADR-0010). |
+| Inference runtime | Inference, preprocess/filter, store-and-forward, local alerting | Alerting is a replica: acks sync upward, tenant alerting authoritative (ADR-0010). |
 | Site services | Update agent, device identity + attestation, time sync, network services | Always present when edge is deployed. |
 | Application *(optional)* | Operator UI, local API | Deployed only at some sites. |
 | Orchestration *(optional)* | Local schedules, buffer flush | Schedules only what must survive disconnection. |

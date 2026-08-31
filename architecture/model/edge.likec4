@@ -3,7 +3,7 @@ model {
     description 'Optional, per site. Never trains, never owns the catalog.'
     metadata { kypId 'KYP-E' }
 
-    runtime = area 'Runtime' {
+    runtime = area 'Inference runtime' {
       metadata { kypId 'KYP-E-RT' }
       inference   = service 'Inference'          { metadata { kypId 'KYP-E-RT-01' } }
       preprocess  = service 'Preprocess, filter' { metadata { kypId 'KYP-E-RT-02' } }

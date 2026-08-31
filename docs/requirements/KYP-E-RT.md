@@ -1,4 +1,4 @@
-# Requirements — Edge runtime (KYP-E-RT)
+# Requirements — Edge inference runtime (KYP-E-RT)
 
 Boundary rule: alerting is a replica; acks sync upward, tenant alerting
 authoritative (ADR-0010). Edge never trains, never owns the catalog.
