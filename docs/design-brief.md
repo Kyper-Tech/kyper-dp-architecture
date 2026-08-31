@@ -40,7 +40,7 @@ modules; version pins.
 
 ### Data layer — shared across environments, zoned (ADR-0006)
 
-| Band | Contains |
+| Group | Contains |
 |---|---|
 | Ingestion | OT gateway (boundary), connectors, data contracts, streams |
 | Storage | Object store (S3 contract, ADR-0007), tables, operational database, indexes (vector, feature), predictions (env-labelled) |
