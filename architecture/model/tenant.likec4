@@ -118,6 +118,7 @@ model {
   tenant.mlws.trainingJobs    -[readsVia]->    tenant.data.catalog       'training reads (incl. audited raw grants)'
   tenant.mlws.trainingJobs    -[publishesTo]-> tenant.registries.modelRegistry 'model versions'
   tenant.mlws.trainingJobs    -[publishesTo]-> tenant.registries.experiments   'evaluation records'
+  tenant.devws.sessions       -[readsVia]->    tenant.data.catalog       'curated-zone reads'
   tenant.devws.sessions       -[publishesTo]-> tenant.registries.sourceRepo    'commits'
   tenant.devws.buildJobs      -[publishesTo]-> tenant.registries.artifactRepo  'images, packages'
   tenant.registries.modelRegistry -[servesTo]-> tenant.serving.modelRuntime   'promoted models'

@@ -37,6 +37,11 @@ never kinds. Object store carries a contract; products are per-tenant-class
 [bindings](../../architecture/bindings/storage.yaml)
 ([ADR-0007](../../adr/0007-object-store-contract-bindings.md)).
 
+A layered storage redesign (time-series, multimodal lakehouse, derived
+serving stores) is proposed in
+[ADR-0014](../../adr/0014-data-layer-storage-layers.md); the diagrams show
+the model as currently decided.
+
 ![Data layer](../../diagrams/views/dataLayer.png)
 
 ### The handoff seam (KYP-T-REG)
