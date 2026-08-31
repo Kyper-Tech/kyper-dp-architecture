@@ -147,4 +147,6 @@ model {
   tenant.trust.admission      -[enforces]->    tenant.application.appRuntime 'signed artifacts only'
   tenant.trust.admission      -[enforces]->    tenant.serving.modelRuntime   'signed models only'
   tenant.data.accessPolicy    -[enforces]->    tenant.data.catalog       'zone grants'
+  tenant.data.accessPolicy    -[enforces]->    tenant.data.queryEngine   'zone + classification grants'
+  tenant.data.accessPolicy    -[enforces]->    tenant.data.opDb          'owner-only access'
 }
