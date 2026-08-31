@@ -133,13 +133,16 @@ views {
   }
   view developerData {
     title 'Developer view — how you reach data'
-    include tenant.devws, tenant.mlws, tenant.dataws, tenant.data.catalog, tenant.data.queryEngine, tenant.data.accessPolicy, tenant.data.zones
+    include tenant.devws, tenant.mlws, tenant.dataws, tenant.application.appRuntime, tenant.data.catalog, tenant.data.queryEngine, tenant.data.opDb, tenant.data.accessPolicy, tenant.data.zones
     autoLayout LeftRight
-    style tenant.data.catalog, tenant.data.queryEngine, tenant.data.accessPolicy, tenant.data.zones {
+    style tenant.data.catalog, tenant.data.queryEngine, tenant.data.opDb, tenant.data.accessPolicy, tenant.data.zones {
       color green
     }
     style tenant.devws, tenant.mlws, tenant.dataws {
       color indigo
+    }
+    style tenant.application.appRuntime {
+      color red
     }
   }
   view codeToProduction {

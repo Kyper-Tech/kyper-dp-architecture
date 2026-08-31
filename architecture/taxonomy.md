@@ -89,6 +89,11 @@ be a producer in one relation and a runtime in another.
 - syncsWith   : component <-> boundary
                async exchange across a seam; never component-to-component
                across it, no service addresses cross
+- owns        : service -> store
+               the single owner of an operational store accesses it
+               directly, reads and writes, no mediation. Target's
+               store.class MUST be operational; exactly one owner per
+               operational store (ADR-0016)
 - enforces    : service -> component
                policy applied to a target (admission -> runtimes,
                access policy -> stores)
@@ -108,8 +113,6 @@ Every metadata key used in the model must be listed here.
   absent on an area = it is a band
 - shared ∈ {across-envs} — one instance serves all environments (data layer)
 - status ∈ {gap} — declared in the architecture but not yet designed
-- owner ∈ (a KYP-ID) — on an operational store: the one component that owns
-  and directly accesses it (store.class operational requires exactly one)
 
 ## 6. Instances (nouns, never elements)
 An instance is one concrete deployment produced by applying a plane's
@@ -191,6 +194,7 @@ terms are admitted only under that test.
 | publishesTo | access (write) / flow | ArchiMate | target must be registry or store; versioned |
 | schedules | triggering | ArchiMate triggering | one orchestrator per environment |
 | syncsWith | flow through a conduit | ArchiMate flow + IEC 62443 | may only terminate on a boundary |
+| owns | access (read/write) | ArchiMate access | operational stores only; exactly one owner per store |
 | enforces | — (policy application) | nearest: ArchiMate realization of a requirement | none close; kept as ours |
 | axis | (architecture) viewpoint dimension | ISO/IEC/IEEE 42010 spirit | axis values are metadata, never elements |
 | instance | instance specification | UML | instances never appear in the model |

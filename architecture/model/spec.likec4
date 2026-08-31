@@ -50,6 +50,9 @@ specification {
     color amber
     line dashed
   }
+  relationship owns {
+    line solid
+  }
   relationship enforces {
     color red
     line dotted
