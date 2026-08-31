@@ -16,56 +16,66 @@ keyed by KYP-ID x tenant class.
 Pull-only downward. No inbound path from control plane into a tenant. (ADR-0001, ADR-0002)
 
 ## Control plane (thin by design; SaaS-lens analysis pending)
-Fleet config (tenant registry + desired state) · Artifact registry (golden, signed, SBOM) ·
-Release control · Staff identity federation · Fleet health aggregation · Tenant lifecycle (GAP).
-Tenant registry carries: tenant class -> storage substrate -> availability posture; site
-connectivity classes; enabled modules; version pins.
+- Fleet config — tenant registry + desired state per tenant
+- Artifact registry — golden: signed, with SBOM
+- Release control
+- Staff identity federation
+- Fleet health aggregation
+- Tenant lifecycle — GAP: provision, suspend, offboard with data export
+
+The tenant registry carries: tenant class -> storage substrate -> availability
+posture; site connectivity classes; ingestion mode (push | pull); enabled
+modules; version pins.
 
 ## Tenant plane
 ### Environment container — instantiated as nonprod and prod (ADR-0005)
-Holds: Workspaces, Serving, Application, Orchestration.
 
-Dev workspace — Sessions · Build/test jobs · Environment images · Scratch runtime
-  Hands off only to source/artifact repos; curated-zone data scope. — ADR-0012
-ML workspace — Notebook sessions · Training jobs · Environment images · Scratch runtime
-  Hands off only to model registry + experiments; classified/raw reads under
-  audited grants. — ADR-0012
-  Both workspaces hold nothing durable (ADR-0004).
-Serving — Model runtime · Retrieval · Inference gateway · Drift monitor (stateless)
-Application — App runtime · API gateway · Alerting (authority) · Public ingress
-Orchestration — Ingest · Transform · Scoring · Retraining trigger · Idle scale
-  (one scheduler per environment; owns all recurring work incl. scale-to-zero)
+| Area | Contains | Rule |
+|---|---|---|
+| Dev workspace | Sessions, build/test jobs, environment images, scratch | Ephemeral (ADR-0004). Publishes only to source + artifact repos; curated data only. (ADR-0012) |
+| ML workspace | Notebook sessions, training jobs, environment images, scratch | Ephemeral (ADR-0004). Publishes only to model registry + experiments; raw reads under audited grants. (ADR-0012) |
+| Serving | Model runtime, retrieval, inference gateway, drift monitor | Stateless: models in from registry, predictions out to storage. |
+| Application | App runtime, API gateway, alerting (authority), public ingress | Stateless; the only public entry point. |
+| Orchestration | Ingest, transform, scoring, retraining trigger, idle scale | One scheduler per environment; owns all recurring work incl. scale-to-zero. |
 
 ### Data layer — shared across environments, zoned (ADR-0006)
-Ingestion — OT gateway (boundary) · Connectors · Contracts · Streams
-Storage — Object store (S3-compatible contract, ADR-0007) · Tables · Operational database ·
-          Indexes (vector, feature) · Predictions (env-labelled)
-Data management — Catalog · Query engine · Lineage · Quality · Env zones ·
-          Classification · Retention + tiering · Access policy
-Zone rules: curated zone writable only by prod orchestration identity; nonprod reads
-curated/raw per classification, writes only its sandbox; every cross-zone grant audited.
-Catalog stays in data management (it IS the data access path) — accepted asymmetry.
+
+| Band | Contains |
+|---|---|
+| Ingestion | OT gateway (boundary), connectors, data contracts, streams |
+| Storage | Object store (S3 contract, ADR-0007), tables, operational database, indexes (vector, feature), predictions (env-labelled) |
+| Data management | Catalog, query engine, lineage, quality, env zones, classification, retention + tiering, access policy |
+
+Zone rules:
+- curated zone: writable only by the prod orchestration identity
+- nonprod: reads curated/raw per classification; writes only to its own sandbox
+- every cross-zone grant is audited
+
+Catalog stays in data management — it IS the data access path (accepted asymmetry).
 
 ### Per-tenant, cross-environment bands
-Registries (the only handoff seam) — Source repo · Artifact repo · Model registry ·
-  Experiments/evaluation records. Immutable, versioned. CI/CD is the only actor that
-  moves a registry entry into a runtime.
-Trust services — Identity (human, workload, device) · Secrets · Keys · Admission ·
-  Audit trail · Network policy
-Operation services — CI/CD · Observability (+ outbound log shipper) · Synthetics ·
-  Incidents/SLOs · Scanning · Backup + DR · Metering
+
+| Band | Contains | Rule |
+|---|---|---|
+| Registries | Source repo, artifact repo, model registry, experiments | The only handoff seam. Immutable, versioned; CI/CD alone moves an entry into a runtime. (ADR-0004) |
+| Trust services | Identity (human, workload, device), secrets, keys, admission, audit trail, network policy | Exist once per tenant; consumed, never re-implemented. |
+| Operation services | CI/CD, observability (+ outbound log shipper), synthetics, incidents/SLOs, scanning, backup + DR, metering | Exist once per tenant; consumed, never re-implemented. |
 
 ## Sync layer (boundary between tenant and edge) — ADR-0003
 Message transport · Artifact transfer · Offline queue · Traffic priority per link class.
 Neither plane holds an address of a service in the other.
 
 ## Edge plane — optional, per site
-Runtime — Inference · Preprocess/filter · Store-and-forward · Local alerting (replica; acks
-  sync upward, tenant alerting authoritative — ADR-0010)
-Site services — Update agent · Device identity + attestation · Time sync · Network services
-Optional (dashed) — Application (operator UI, local API) · Orchestration (local schedules,
-  buffer flush). Edge never trains, never holds the catalog. Store-and-forward is the one
-  intentional co-location of state and behaviour outside the data layer.
+
+| Area | Contains | Rule |
+|---|---|---|
+| Runtime | Inference, preprocess/filter, store-and-forward, local alerting | Alerting is a replica: acks sync upward, tenant alerting authoritative (ADR-0010). |
+| Site services | Update agent, device identity + attestation, time sync, network services | Always present when edge is deployed. |
+| Application *(optional)* | Operator UI, local API | Deployed only at some sites. |
+| Orchestration *(optional)* | Local schedules, buffer flush | Schedules only what must survive disconnection. |
+
+Edge never trains, never holds the catalog. Store-and-forward is the one
+intentional co-location of state and behaviour outside the data layer.
 
 ## Contracts (the seam pattern)
 Data contract at ingestion (schema, semantics, quality thresholds, delivery; violations
