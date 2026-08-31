@@ -24,9 +24,11 @@ Elements form two levels:
 external belongs to neither level: it is an outside actor.
 
 - plane    — top-level operational domain with its own trust stance and its
-             own instancing rule. Exactly three exist: control, tenant, edge.
+             own instancing rule. Exactly three exist
+             (control plane, tenant plane, edge plane).
 - area     — grouping of components inside exactly one plane, sharing ONE
-             boundary rule.
+             boundary rule
+             (data layer, serving, ML workspace, trust services).
              boundary rule (of an area) — the single stated constraint on
              what may cross the area's edge: what may be read, written, or
              handed off, by whom. It is a rule, not a thing — distinct from
@@ -36,20 +38,26 @@ external belongs to neither level: it is an outside actor.
              (§4); belongs to exactly one plane.
              Not areas: environments and site classes (axis values, §1),
              the sync layer (a boundary).
-- service  — behaviour without durable state (gateways, schedulers, catalog).
+- service  — behaviour without durable state
+             (inference gateway, scheduler, catalog, CI/CD).
 - store    — durable state. Flavours via store.class metadata (§5),
-             never new kinds.
+             never new kinds
+             (object store, tables, operational database, predictions).
 - registry — immutable, versioned handoff store between producers and
-             runtimes (roles, §4). A kind of its own — not a store flavour —
+             runtimes (roles, §4)
+             (source repo, artifact repo, model registry, experiments).
+             A kind of its own — not a store flavour —
              because its boundary rule differs: write-once entries; read
              into runtimes by CI/CD only; promotion = lifecycle-stage
              transition (e.g. candidate -> promoted; a registry stage, not
              an environment — ADR-0005).
-- boundary — a trust/coupling seam reified as a named component (OT gateway,
-             public ingress, sync layer, staff identity federation). Both
-             sides reference the boundary; neither side references the other.
+- boundary — a trust/coupling seam reified as a named component
+             (OT gateway, public ingress, sync layer, staff identity
+             federation). Both sides reference the boundary; neither side
+             references the other.
 - external — customer-owned or third-party system the platform integrates
-             with. Lives outside every plane.
+             with. Lives outside every plane
+             (customer historian, SCADA system, customer identity provider).
 
 ## 3. Environment container and bands
 Two classifications of areas — not kinds:
