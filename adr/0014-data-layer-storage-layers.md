@@ -4,13 +4,13 @@ status: proposed
 date: 2026-08-31
 affects: [KYP-T-DATA, KYP-T-DATA-04]
 ---
-# Layer the storage band: time-series, lakehouse, serving, operational
+# Layer the data layer's storage group: time-series, lakehouse, serving, operational
 
 ## Context
-Telemetry is the platform's primary data shape, but the storage band gives
+Telemetry is the platform's primary data shape, but the storage group gives
 it no home: raw sensor data has only a generic object store to land in, and
 vector search hides inside an undifferentiated "Indexes" store. Access
-patterns in the band differ by orders of magnitude (ingest-rate appends vs
+patterns in the group differ by orders of magnitude (ingest-rate appends vs
 batch analytics vs millisecond similarity lookups) yet are not named.
 
 ## Decision

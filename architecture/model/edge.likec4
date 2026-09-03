@@ -1,6 +1,6 @@
 model {
   edge = plane 'Edge plane' {
-    description 'Optional, per site. Never trains, never owns the catalog.'
+    description 'Optional; one deployment per location (a site). Never trains, never owns the catalog.'
     metadata { kypId 'KYP-E' }
 
     runtime = area 'Inference runtime' {

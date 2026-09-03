@@ -53,14 +53,13 @@ Trust rules, one per seam:
 
 ## Control plane (thin by design; SaaS-lens analysis pending)
 
-The tenant planes run the customers' workloads; the control plane answers
-Kyper's questions about the fleet: what should each tenant run, where does
-trustworthy software come from, who gets which release when, is everyone
-alive, which tenants are affected by a CVE, and who at Kyper may act. It
-is how one company operates many isolated platforms without many
-operations teams. Deliberately thin: it sits in no runtime path and holds
-no customer data (REQ-KYP-C-07), so a control-plane outage means "no
-updates today", never a production stop.
+The control plane is how Kyper operates the fleet: it answers what each
+tenant should run, where trustworthy software comes from, who gets which
+release when, whether every tenant is alive, which tenants a CVE affects,
+and who at Kyper may act. Customer workloads never touch it — those live
+entirely in the tenant planes. Deliberately thin: it sits in no runtime
+path and holds no customer data (REQ-KYP-C-07), so a control-plane outage
+means "no updates today", never a production stop.
 
 - Fleet config — tenant registry + desired state per tenant
 - Artifact registry — golden: signed, with SBOM
@@ -114,10 +113,19 @@ Neither plane holds an address of a service in the other.
 
 ## Edge plane — optional, per site
 
+The edge plane brings inference to where the data is born: plants and
+sites that may lose connectivity for days. It adds to serving, never
+replaces it — the tenant plane's serving area always runs inference; a
+site additionally scores locally when latency or a dead WAN demands it.
+Both runtimes consume the same promoted models from the tenant's model
+registry, in per-target variants (quantized bundles for edge). Training,
+retraining and batch scoring stay in the tenant plane, always.
+
 A site is one deployment of this plane at one location, classed by
-siteClass (connected | remote). The site is only what Kyper deploys:
-customer systems at the same location are externals, reached through the
-ingestion seam (trust rule 3), never through the site.
+siteClass (connected | remote).
+The site is only what Kyper deploys: customer systems at the same
+location are externals, reached through the ingestion seam (trust
+rule 3), never through the site.
 
 | Area | Contains | Rule |
 |---|---|---|
