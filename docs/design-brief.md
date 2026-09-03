@@ -12,8 +12,8 @@ technology fulfills that promise is decided per tenant class in
 [architecture/bindings/](../architecture/bindings/)
 ([ADR-0007](../adr/0007-object-store-contract-bindings.md)). So "object
 store" means "keeps objects, with ranged reads, multipart upload and
-per-zone access control", and whether that is GCS, S3 or SeaweedFS — and
-which protocol it speaks — depends on where the tenant runs.
+per-zone access control", and which product provides it — and which
+protocol it speaks — depends on where the tenant runs.
 
 ## Planes
 
@@ -153,10 +153,23 @@ evaluation thresholds met, per-target variants incl. quantized edge bundles). De
 contract = signed, scanned artifact verified by admission.
 
 ## Accepted costs
-Shared data layer = shared failure domain across envs (mitigated for cloud tenants by managed
-object storage; catalog/db/indexes/query engine remain self-run). Query engine needs
-workload isolation between prod app and nonprod exploration. No formal stage env: full-scale
-rehearsal = nonprod run against curated read-only.
+
+These are deliberate trade-offs, not oversights. Each is acceptable only
+because a named control holds it in place — and a security or compliance
+review will ask for evidence that the control actually operated, not that
+it exists. So each row names both. A row whose evidence column is open is
+a gap until the target is set, not an accepted cost.
+
+| Accepted cost | What makes it acceptable | Evidence |
+|---|---|---|
+| The data layer is shared across environments ([ADR-0006](../adr/0006-shared-zoned-data-layer.md)) | Zoning: the curated zone is writable only by the prod orchestration identity; nonprod writes only its own sandbox; access policy enforces on the catalog, the query engine and the operational database | Cross-zone grant log in the audit trail; scenario [Q-03](arc42/10-quality-requirements.md) |
+| Therefore one failure domain spans environments | Managed object storage for cloud tenants; catalog, database, indexes and query engine stay self-run | Per-store DR posture ([ADR-0014](../adr/0014-data-layer-storage-layers.md), proposed). **Open:** RPO/RTO per tenant class ([Q-06](arc42/10-quality-requirements.md)) |
+| One query engine serves the prod application and nonprod exploration | Workload isolation between the two | **Open:** isolation target not yet set ([Q-07](arc42/10-quality-requirements.md)) |
+| No formal stage environment ([ADR-0005](../adr/0005-two-environments.md)) | Full-scale rehearsal is a nonprod run against curated data, read-only | Nonprod cannot write curated by construction (same control as row 1) |
+
+The compliance reading of these rows — which criterion each answers, and
+what an auditor would be shown — belongs in
+[risks and technical debt](arc42/11-risks-and-technical-debt.md).
 
 ## Open decisions
 - Request-response vs batch inference (blocks online feature path) — oldest open fork

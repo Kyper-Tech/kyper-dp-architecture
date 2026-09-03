@@ -22,6 +22,9 @@ contract-profiles:
       - an S3-compatible endpoint reachable by components that need one,
         native or via an interoperability endpoint. S3 is an access protocol
         here, not the contract; the rows above are the contract.
+      - "object immutability (WORM) — an object or prefix can be made
+        immutable for a stated retention period, so that nothing can alter
+        or delete it early. Audit archives depend on this."
     not-relied-upon:
       - S3 versioning API (point-in-time recovery is the backup band's concern)
       - object tagging via S3 API (classification lives in the catalog, KYP-T-DATA-05)
@@ -53,13 +56,19 @@ KYP-T-DATA-01:
     cloud-gcp: { product: GCS, posture: managed-regional,
                  protocol: "gcs-native (gs://), plus S3 interoperability endpoint" }
     cloud-aws: { product: S3,  posture: managed-regional, protocol: s3 }
-    onprem:    { product: SeaweedFS, posture: self-run, adr: ADR-0011, protocol: s3,
-                 note: "SeaweedFS IAM is coarser than S3/RGW, so the
-                        curated-zone write rule (ADR-0006) is enforced via
-                        dedicated identities plus access policy mediation
-                        (KYP-T-DATA-25). Block storage for the operational
-                        DB comes from a separate CSI — no object store
-                        double-duty." }
+    onprem:    { product: TBD, posture: self-run, protocol: s3,
+                 status: not-selected,
+                 note: "No product selected. A candidate must satisfy every
+                        required row above, and in particular:
+                        (a) immutability (WORM) for audit archives;
+                        (b) IAM granular enough for the curated-zone write
+                            rule (ADR-0006) without leaning on access policy
+                            mediation alone (KYP-T-DATA-25);
+                        (c) operable by a team that is not a storage team.
+                        It provides no block storage: the operational
+                        database needs a separate CSI. A local object store
+                        may be used for application development; that is a
+                        developer convenience, not a binding." }
 KYP-T-DATA-03:
   contract: postgres-wire
   bindings:

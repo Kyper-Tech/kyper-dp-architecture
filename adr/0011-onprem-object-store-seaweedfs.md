@@ -1,40 +1,33 @@
 ---
 id: ADR-0011
-status: proposed
+status: superseded-by ADR-0019
 date: 2026-08-31
-affects: [KYP-T-DATA-01, KYP-T-DATA-25]
+affects: [KYP-T-DATA-01]
 ---
 # Bind the on-prem object store contract to SeaweedFS
 
+Superseded by [ADR-0019](0019-onprem-object-store-requirements.md), which
+states the requirements an on-prem object store must satisfy instead of
+naming a product. Kept as the record of what was considered.
+
 ## Context
-[ADR-0007](0007-object-store-contract-bindings.md) left the onprem product for the object-store contract TBD. On-prem
-tenant footprints are small and operationally constrained (edge-adjacent);
-the team operating them is not a storage team. The contract profile in
-[architecture/bindings/storage.yaml](../architecture/bindings/storage.yaml) defines what the product must satisfy.
+[ADR-0007](0007-object-store-contract-bindings.md) left the onprem product
+for the object-store contract open. On-prem tenant footprints are small and
+operationally constrained (edge-adjacent); the team operating them is not a
+storage team. SeaweedFS is light to operate and sufficient for application
+development.
 
 ## Decision
-SeaweedFS is the onprem binding for KYP-T-DATA-01. It satisfies the
-profile's required rows (object CRUD, ranged reads, multipart, presigned
-URLs, encryption at rest) with one compensation: its IAM is coarser than
-S3/RGW, so the curated-zone write rule ([ADR-0006](0006-shared-zoned-data-layer.md)) is enforced by dedicated
-per-zone identities plus mediation by the access policy component
-(KYP-T-DATA-25) — not by store-native policy documents.
+Not adopted. SeaweedFS was proposed as the onprem binding for
+KYP-T-DATA-01 on the strength of its operability, with the acknowledged
+compensation that its IAM is coarser than S3-class, so the curated-zone
+write rule ([ADR-0006](0006-shared-zoned-data-layer.md)) would have to be
+carried by dedicated per-zone identities plus mediation by the access
+policy component (KYP-T-DATA-25).
 
 ## Consequences
-- Zone enforcement correctness shifts partly from the store to platform
-  components; the access-policy grant log becomes the audit evidence.
-- The object store provides no block storage: the operational database
-  (KYP-T-DATA-03) needs a separate block CSI. Postgres cannot run on object
-  storage; S3-backed Postgres engines are managed/commercial only.
-- SeaweedFS community/maintainer concentration is a monitored risk; the
-  contract profile keeps a swap to another S3-wire product a bindings-only
-  change.
-
-## Rejected alternatives
-- MinIO: AGPL plus the 2025 community-edition feature removals make it a
-  licensing and roadmap risk inside a customer-shipped product.
-- Ceph RGW: strongest IAM row and block/FS double-duty, but operationally
-  too heavy for the target on-prem footprints.
-- Raw PVCs: block/filesystem volumes expose no object API, presigned URLs
-  or IAM — they cannot satisfy the object-store contract; every candidate
-  runs on PVCs.
+Superseded before adoption, so none took effect. The reasoning that ended
+it: the contract profile later gained an immutability (WORM) row for audit
+archives, and a product had been proposed before the criteria were
+settled. Those criteria now live in
+[ADR-0019](0019-onprem-object-store-requirements.md).
