@@ -111,7 +111,9 @@ Every metadata key used in the model must be listed here.
 - optional ∈ {true} — component deployed only at some sites (edge)
 - envScoped ∈ {true} — area belongs to the environment container (§3);
   absent on an area = it is a band
-- shared ∈ {across-envs} — one instance serves all environments (data layer)
+- shared ∈ {across-envs} — on a store: one instance serves all
+  environments. Analytical stores only; operational and online stores are
+  per environment (ADR-0006)
 - status ∈ {gap} — declared in the architecture but not yet designed
 
 ## 6. Instances (nouns, never elements)

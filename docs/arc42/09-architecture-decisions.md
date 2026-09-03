@@ -15,7 +15,7 @@ superseded. Nothing is accepted yet — the baseline is under review.
 | [ADR-0003](../../adr/0003-generic-sync-layer.md) | Generic sync layer, not a named broker | KYP-T-SYNC-01, KYP-E |
 | [ADR-0004](../../adr/0004-registries-only-handoff.md) | Registries are the only producer→runtime handoff | KYP-T-REG, KYP-T-DEVWS, KYP-T-MLWS |
 | [ADR-0005](../../adr/0005-two-environments.md) | Two environments: nonprod and prod | KYP-T |
-| [ADR-0006](../../adr/0006-shared-zoned-data-layer.md) | One shared, zoned data layer across environments | KYP-T-DATA |
+| [ADR-0006](../../adr/0006-shared-zoned-data-layer.md) | Data layer: sharing follows store class, access follows purpose | KYP-T-DATA and its stores |
 | [ADR-0007](../../adr/0007-object-store-contract-bindings.md) | Object store contract in model; products as bindings | KYP-T-DATA-01 |
 | [ADR-0009](../../adr/0009-architecture-toolchain.md) | Taxonomy + arc42 + LikeC4 + CI gate; Notion links only | — |
 | [ADR-0010](../../adr/0010-alerting-authority.md) | Tenant alerting authoritative; edge is a replica | KYP-T-APP-03, KYP-E-RT-04 |

@@ -93,12 +93,12 @@ modules; version pins.
 | Application | App runtime, API gateway, alerting (authority), public ingress | Stateless; the only public entry point. |
 | Orchestration | Ingest, transform, scoring, retraining trigger, idle scale | One scheduler per environment; owns all recurring work incl. scale-to-zero. |
 
-### Data layer — shared across environments, zoned ([ADR-0006](../adr/0006-shared-zoned-data-layer.md))
+### Data layer — analytical stores shared and zoned, the rest per environment ([ADR-0006](../adr/0006-shared-zoned-data-layer.md))
 
 | Group | Contains |
 |---|---|
 | Ingestion | OT gateway (boundary), connectors, data contracts, streams |
-| Storage | Object store (object-store contract, [ADR-0007](../adr/0007-object-store-contract-bindings.md)), tables, operational database, indexes (vector, feature), predictions (env-labelled) |
+| Storage | Shared and zoned: object store (object-store contract, [ADR-0007](../adr/0007-object-store-contract-bindings.md)), tables. Per environment: operational database, indexes (vector, feature), predictions |
 | Data management | Catalog, query engine, lineage, quality, env zones, classification, retention + tiering, access policy |
 
 Zone rules:
@@ -162,8 +162,8 @@ a gap until the target is set, not an accepted cost.
 
 | Accepted cost | What makes it acceptable | Evidence |
 |---|---|---|
-| The data layer is shared across environments ([ADR-0006](../adr/0006-shared-zoned-data-layer.md)) | Zoning: the curated zone is writable only by the prod orchestration identity; nonprod writes only its own sandbox; access policy enforces on the catalog, the query engine and the operational database | Cross-zone grant log in the audit trail; scenario [Q-03](arc42/10-quality-requirements.md) |
-| Therefore one failure domain spans environments | Managed object storage for cloud tenants; catalog, database, indexes and query engine stay self-run | Per-store DR posture ([ADR-0014](../adr/0014-data-layer-storage-layers.md), proposed). **Open:** RPO/RTO per tenant class ([Q-06](arc42/10-quality-requirements.md)) |
+| The analytical stores are shared across environments ([ADR-0006](../adr/0006-shared-zoned-data-layer.md)) | Zoning: the curated zone is writable only by the prod orchestration identity; nonprod writes only its own sandbox; access policy enforces on the catalog, the query engine and the operational database. Operational and online stores are per environment, so they are not exposed at all | Cross-zone grant log in the audit trail; scenario [Q-03](arc42/10-quality-requirements.md) |
+| Therefore one failure domain spans environments, for the analytical stores | Managed object storage for cloud tenants; catalog and query engine stay self-run | Per-store DR posture ([ADR-0014](../adr/0014-data-layer-storage-layers.md), proposed). **Open:** RPO/RTO per tenant class ([Q-06](arc42/10-quality-requirements.md)) |
 | One query engine serves the prod application and nonprod exploration | Workload isolation between the two | **Open:** isolation target not yet set ([Q-07](arc42/10-quality-requirements.md)) |
 | No formal stage environment ([ADR-0005](../adr/0005-two-environments.md)) | Full-scale rehearsal is a nonprod run against curated data, read-only | Nonprod cannot write curated by construction (same control as row 1) |
 
@@ -174,8 +174,15 @@ what an auditor would be shown — belongs in
 ## Open decisions
 - Request-response vs batch inference (blocks online feature path) — oldest open fork
 - Semantic layer above query engine (only if >1 consumer defines same KPI)
-- Availability targets per stateful component; DR targets (RPO/RTO) per tenant class
-- Tenant lifecycle (provision/suspend/offboard with data export) in control plane
+- Business continuity and disaster recovery — TBD, not yet addressed:
+  availability targets per stateful component; RPO/RTO per tenant class;
+  whether geographically resilient hosting is offered; and the interval at
+  which recovery plans are tested. Until these exist, the resiliency
+  questions in a customer security review have no answer.
+- Tenant lifecycle in the control plane (KYP-C-FLEET-04, `status 'gap'`) —
+  provision, suspend, and offboard. Offboarding must cover data export,
+  secure deletion of customer data across every store and backup, and a
+  published exit procedure a customer can be shown; none of it exists yet.
 - Analyst workspace (own area vs a home inside dev workspace)
 - Control-plane residency. Today one control plane serves all tenants.
   That is defensible because it holds no customer data (REQ-KYP-C-07):

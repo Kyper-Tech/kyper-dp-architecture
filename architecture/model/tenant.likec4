@@ -57,10 +57,10 @@ model {
       }
     }
 
-    // ---- Data layer: shared across environments, zoned — ADR-0006
+    // ---- Data layer: analytical stores shared and zoned, the rest per env — ADR-0006
     data = area 'Data layer' {
-      description 'All durable state. Mediated access only. Shared across envs, zoned.'
-      metadata { kypId 'KYP-T-DATA'; shared 'across-envs'; adr 'ADR-0006' }
+      description 'All durable state. Mediated access only. Analytical stores shared and zoned; operational and online per environment.'
+      metadata { kypId 'KYP-T-DATA'; adr 'ADR-0006' }
 
       otGateway   = boundary 'OT gateway'   { metadata { kypId 'KYP-T-DATA-10' } }
       connectors  = service 'Connectors'    { metadata { kypId 'KYP-T-DATA-11' } }
@@ -69,12 +69,12 @@ model {
 
       objectStore = store 'Object store' {
         technology 'object-store contract'
-        metadata { kypId 'KYP-T-DATA-01'; class 'analytical'; adr 'ADR-0007' }
+        metadata { kypId 'KYP-T-DATA-01'; class 'analytical'; shared 'across-envs'; adr 'ADR-0007' }
       }
-      tables      = store 'Tables'               { metadata { kypId 'KYP-T-DATA-02'; class 'analytical' } }
+      tables      = store 'Tables'               { metadata { kypId 'KYP-T-DATA-02'; class 'analytical'; shared 'across-envs' } }
       opDb        = store 'Operational database' { metadata { kypId 'KYP-T-DATA-03'; class 'operational'; adr 'ADR-0016' } }
       indexes     = store 'Indexes'              { metadata { kypId 'KYP-T-DATA-04'; class 'online' } }
-      predictions = store 'Predictions'          { metadata { kypId 'KYP-T-DATA-07'; class 'analytical' } }
+      predictions = store 'Predictions'          { metadata { kypId 'KYP-T-DATA-07'; class 'online' } }
 
       catalog     = service 'Catalog'        { metadata { kypId 'KYP-T-DATA-05' } }
       queryEngine = service 'Query engine'   { metadata { kypId 'KYP-T-DATA-06' } }
