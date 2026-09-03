@@ -27,7 +27,7 @@ three.
 |---|---|---|---|
 | Control | 1 | Kyper | never initiates into a tenant |
 | Tenant | one per customer | Kyper-managed, customer-owned data | pulls from control |
-| Edge | 0..N per tenant, per site | tenant plane | exchanges with tenant only via sync layer |
+| Edge | 0..N per tenant, one per location (a deployment = a site) | tenant plane | exchanges with tenant only via sync layer |
 
 Two words are used precisely throughout this brief: **edge** is the plane —
 the class of thing Kyper deploys; a **site** is one deployment of that
@@ -52,6 +52,16 @@ Trust rules, one per seam:
    Secrets and every use audited. (ADR-0001)
 
 ## Control plane (thin by design; SaaS-lens analysis pending)
+
+The tenant planes run the customers' workloads; the control plane answers
+Kyper's questions about the fleet: what should each tenant run, where does
+trustworthy software come from, who gets which release when, is everyone
+alive, which tenants are affected by a CVE, and who at Kyper may act. It
+is how one company operates many isolated platforms without many
+operations teams. Deliberately thin: it sits in no runtime path and holds
+no customer data (REQ-KYP-C-07), so a control-plane outage means "no
+updates today", never a production stop.
+
 - Fleet config — tenant registry + desired state per tenant
 - Artifact registry — golden: signed, with SBOM
 - Release control

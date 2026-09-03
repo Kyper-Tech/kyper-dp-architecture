@@ -1,5 +1,9 @@
 # Requirements — Control plane (KYP-C)
 
+Purpose: answers Kyper's questions about the fleet (what each tenant runs,
+where trustworthy software comes from, who releases what when, is everyone
+alive) while sitting in no runtime path and holding no customer data.
+
 No areas yet (components sit directly in the plane); requirements at plane
 level until that changes.
 
