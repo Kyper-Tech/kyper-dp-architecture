@@ -15,6 +15,14 @@ store" means "keeps objects, speaks an S3-compatible API", and whether that
 is GCS, S3 or SeaweedFS depends on where the tenant runs.
 
 ## Planes
+
+The architecture's first cut is into three planes. A plane is the highest
+level of structure: an operational domain that bundles the capabilities
+which must be run and trusted together, with its own trust stance and its
+own instancing rule. Nothing runs "as a plane" (planes are groupings, not
+components); every component in the platform lives in exactly one of the
+three.
+
 | Plane | Instances | Operated by | Network direction |
 |---|---|---|---|
 | Control | 1 | Kyper | never initiates into a tenant |
