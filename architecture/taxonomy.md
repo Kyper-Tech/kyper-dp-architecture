@@ -117,12 +117,21 @@ Every metadata key used in the model must be listed here.
 ## 6. Instances (nouns, never elements)
 An instance is one concrete deployment produced by applying a plane's
 instancing rule or an axis value. Instances never appear in the model.
+Every plane is a term (a class); its deployments get an instance noun,
+named after the dimension the plane instantiates over (customer -> tenant,
+location -> site, env value -> environment), never after the plane:
 
-- tenant      — one instantiation of the tenant plane, for one customer
-- environment — one instantiation of the environment container, per env value
-- site        — one instantiation of the edge plane, at one location
-- fleet       — the set of all tenants; the control plane's object of
-                management
+| Term (class) | Instance noun | How many |
+|---|---|---|
+| control plane | the control plane (singleton: class and instance coincide, so no separate noun exists) | exactly 1 |
+| tenant plane | a tenant | one per customer |
+| environment container (the env-scoped subset of tenant areas, §3) | an environment | two per tenant today: its nonprod and its prod |
+| edge plane | a site | 0..N per tenant, one per location |
+
+Two disambiguations:
+- customer — the organization. A tenant is the deployment that serves it;
+  "tenant" never means the organization.
+- fleet — the set of all tenants; the control plane's object of management.
 
 ## 7. ID scheme
 KYP-<plane>-<AREA>-<nn>   plane ∈ {C, T, E} (control, tenant, edge);

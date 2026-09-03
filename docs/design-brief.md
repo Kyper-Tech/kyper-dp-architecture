@@ -29,7 +29,27 @@ three.
 | Tenant | one per customer | Kyper-managed, customer-owned data | pulls from control |
 | Edge | 0..N per tenant, per site | tenant plane | exchanges with tenant only via sync layer |
 
-Pull-only downward. No inbound path from control plane into a tenant. (ADR-0001, ADR-0002)
+Two words are used precisely throughout this brief: **edge** is the plane —
+the class of thing Kyper deploys; a **site** is one deployment of that
+plane at one location (taxonomy: an instance). Customer-owned systems (a
+historian, an API) are never part of a site, even when they sit in the
+same building — they are external systems on a separate seam.
+
+Trust rules, one per seam:
+
+1. **Control -> tenant (delivery).** The tenant always dials: releases and
+   config flow downward, but over connections the tenant opened (agents
+   poll and pull, GitOps-style). No listening endpoint and no credential
+   lets the control plane reach into a customer environment, so
+   compromising it grants access to zero customer networks. (ADR-0001)
+2. **Tenant <-> edge (sync).** Neither side dials the other; both meet at
+   the sync layer. Sites connect outbound to it, pushing telemetry and
+   alert acks up and fetching signed bundles down. Nothing on the tenant
+   side ever connects into a site. (ADR-0003)
+3. **Tenant -> customer systems (ingestion).** Push or pull, per tenant.
+   In pull mode the tenant's connectors DO dial out to the customer's
+   system, wherever it is hosted, with credentials held in that tenant's
+   Secrets and every use audited. (ADR-0001)
 
 ## Control plane (thin by design; SaaS-lens analysis pending)
 - Fleet config — tenant registry + desired state per tenant
@@ -83,6 +103,11 @@ Message transport · Artifact transfer · Offline queue · Traffic priority per 
 Neither plane holds an address of a service in the other.
 
 ## Edge plane — optional, per site
+
+A site is one deployment of this plane at one location, classed by
+siteClass (connected | remote). The site is only what Kyper deploys:
+customer systems at the same location are externals, reached through the
+ingestion seam (trust rule 3), never through the site.
 
 | Area | Contains | Rule |
 |---|---|---|

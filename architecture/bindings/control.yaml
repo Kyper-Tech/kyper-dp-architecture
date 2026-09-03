@@ -1,0 +1,30 @@
+# Control-plane bindings. The control plane is a singleton (taxonomy §6),
+# so there is no tenantClass dimension: one binding per contract,
+# posture always kyper-operated. Products never enter model/.
+# One product may fulfill several contracts if it satisfies each profile
+# (rule established in ADR-0014).
+
+KYP-C-FLEET-02:
+  contract: artifact-distribution
+  # OCI distribution API for images + package/chart repository +
+  # signature and SBOM attestation storage
+  binding: { product: TBD, posture: kyper-operated,
+             note: "image-registry category (Harbor/Artifactory class)" }
+KYP-C-FLEET-01:
+  contract: fleet-desired-state
+  # git-backed desired state + tenant registry records (ADR-0013 schema)
+  binding: { product: TBD, posture: kyper-operated,
+             note: "git forge + record store; the fleet's GitOps root" }
+KYP-C-FLEET-03:
+  contract: release-promotion
+  binding: { product: TBD, posture: kyper-operated,
+             note: "rollout tooling over fleet-desired-state; rings, holds, pins" }
+KYP-C-OPS-01:
+  contract: status-aggregation
+  # receives aggregated status only, never payloads or logs
+  binding: { product: TBD, posture: kyper-operated,
+             note: "metrics + dashboards category (Grafana class)" }
+KYP-C-TRUST-01:
+  contract: staff-oidc-federation
+  binding: { product: TBD, posture: kyper-operated,
+             note: "SSO/IdP federation category" }
