@@ -137,6 +137,16 @@ rehearsal = nonprod run against curated read-only.
 - Availability targets per stateful component; DR targets (RPO/RTO) per tenant class
 - Tenant lifecycle (provision/suspend/offboard with data export) in control plane
 - Analyst workspace (own area vs a home inside dev workspace)
+- Control-plane residency. Today one control plane serves all tenants.
+  That is defensible because it holds no customer data (REQ-KYP-C-07):
+  only desired state, signed releases and health summaries. The open
+  question is whether a jurisdiction forces a split anyway — a customer
+  contract demanding in-country metadata, transfer rules catching audit
+  or consent records, or critical-infrastructure rules covering the plant
+  locations stored in the tenant registry. If triggered, the prepared
+  shape is: tenant registry and fleet health per jurisdiction, golden
+  artifacts global or mirrored. Distance and latency are not triggers —
+  the control plane sits in no runtime path.
 - Federated learning across tenants (future option; keep compatible, do not build)
 
 ## Standards to map against (see docs/analysis-plan.md)
