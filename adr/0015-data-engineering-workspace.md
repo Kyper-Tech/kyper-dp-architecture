@@ -10,11 +10,11 @@ affects: [KYP-T-DATAWS, KYP-T-ORCH, KYP-T-REG-02]
 Data engineering half-exists in the architecture: its runtime (the
 orchestration scheduler), and its machinery (connectors, contracts,
 quality) are modeled, but the practice is not. Nowhere to develop
-pipelines: by the boundary-rule test (ADR-0012), a data engineer publishes
+pipelines: by the boundary-rule test ([ADR-0012](0012-split-dev-ml-workspaces.md)), a data engineer publishes
 to source/artifact repos (like dev) while reading raw data under audited
 grants (like ML) — a third distinct rule that neither existing workspace
 admits. And no registry edge feeds the scheduler: pipelines reach their
-runtime by an unmodeled path, violating registries-only handoff (ADR-0004)
+runtime by an unmodeled path, violating registries-only handoff ([ADR-0004](0004-registries-only-handoff.md))
 exactly as the app-runtime path does.
 
 ## Decision
@@ -28,11 +28,11 @@ exactly as the app-runtime path does.
    jobs, environment images, scratch.
 2. The pipeline promotion path is modeled: promoted pipeline artifacts flow
    from the artifact repo (KYP-T-REG-02) to the orchestration scheduler via
-   servesTo, closing the ADR-0004 gap for pipelines. Contract and quality
+   servesTo, closing the [ADR-0004](0004-registries-only-handoff.md) gap for pipelines. Contract and quality
    definitions ride the same path — versioned artifacts, never edited live.
 
 ## Consequences
-- Three workspace anatomies to operate; the ADR-0012 consequence
+- Three workspace anatomies to operate; the [ADR-0012](0012-split-dev-ml-workspaces.md) consequence
   ("a future analyst audience needs an explicit home") now has a pattern:
   each audience with a distinct boundary rule gets an area, and the
   analyst decision (open in the brief) should reuse it.
@@ -47,4 +47,4 @@ exactly as the app-runtime path does.
 - Fold into dev workspace: wrong data scope (curated-only forbids
   raw -> curated pipeline development).
 - Widen dev workspace's rule to cover both: recreates the one-area,
-  two-rules ambiguity that ADR-0012 removed.
+  two-rules ambiguity that [ADR-0012](0012-split-dev-ml-workspaces.md) removed.

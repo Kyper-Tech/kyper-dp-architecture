@@ -7,16 +7,16 @@ a portal that only LINKS here; Linear holds tasks. This repo never writes to
 either.
 
 ## Read first, in this order
-1. docs/design-brief.md      — the architecture (v13) and every decision behind it
-2. architecture/taxonomy.md  — kinds, relation kinds, axes, KYP-ID scheme
+1. [docs/design-brief.md](docs/design-brief.md)      — the architecture (v13) and every decision behind it
+2. [architecture/taxonomy.md](architecture/taxonomy.md)  — kinds, relation kinds, axes, KYP-ID scheme
 3. adr/                      — accepted decisions; never re-open one without a new ADR
-4. docs/analysis-plan.md     — the standards-conformance work plan (Linear project)
+4. [docs/analysis-plan.md](docs/analysis-plan.md)     — the standards-conformance work plan (Linear project)
 
 ## Hard rules
 - Model files may use only kinds and relation kinds declared in
-  architecture/model/spec.likec4. Adding a kind requires an ADR first.
+  [architecture/model/spec.likec4](architecture/model/spec.likec4). Adding a kind requires an ADR first.
 - Product names (S3, GCS, MinIO, Keycloak, Argo, Airflow...) NEVER appear in
-  architecture/model/. They live in architecture/bindings/*.yaml keyed by
+  [architecture/model/](architecture/model/). They live in [architecture/bindings/*.yaml](architecture/bindings/) keyed by
   KYP-ID x tenant class. The model states contracts, not products.
 - Environments (nonprod, prod), tenants and site classes are AXES expressed as
   metadata — never elements, never duplicated subtrees.
@@ -47,18 +47,18 @@ either.
 6. Environments are instances of the environment container, not components.
 
 ## Rejected options — do not propose these again
-- three environments (dev / stage / prod)          -> ADR-0005
-- one workspace subsystem with dev/ML profiles     -> ADR-0012 (dev and ML are separate areas)
-- source repo / artifact repo / model registry inside a space -> ADR-0004
-- product names at component level                 -> ADR-0007
-- "message broker" as the named edge boundary      -> ADR-0003 (generic sync layer)
-- CI writing registers or diagrams into Notion     -> ADR-0009
+- three environments (dev / stage / prod)          -> [ADR-0005](adr/0005-two-environments.md)
+- one workspace subsystem with dev/ML profiles     -> [ADR-0012](adr/0012-split-dev-ml-workspaces.md) (dev and ML are separate areas)
+- source repo / artifact repo / model registry inside a space -> [ADR-0004](adr/0004-registries-only-handoff.md)
+- product names at component level                 -> [ADR-0007](adr/0007-object-store-contract-bindings.md)
+- "message broker" as the named edge boundary      -> [ADR-0003](adr/0003-generic-sync-layer.md) (generic sync layer)
+- CI writing registers or diagrams into Notion     -> [ADR-0009](adr/0009-architecture-toolchain.md)
 
 ## Working conventions
 - Branch per Linear issue: KYP-<n>-<slug>. PR description names the finding
   row or ADR it resolves.
-- New decision: copy adr/template.md to adr/NNNN-title.md, status "proposed";
+- New decision: copy [adr/template.md](adr/template.md) to adr/NNNN-title.md, status "proposed";
   flip to "accepted" in the merging PR. Add the affected KYP-IDs to `affects:`.
-- Diagrams are views in architecture/model/views/. Never hand-draw a diagram
+- Diagrams are views in [architecture/model/](architecture/model/)views/. Never hand-draw a diagram
   that the model can render.
-- Keep docs/design-brief.md accurate: it is the narrative the portal links to.
+- Keep [docs/design-brief.md](docs/design-brief.md) accurate: it is the narrative the portal links to.

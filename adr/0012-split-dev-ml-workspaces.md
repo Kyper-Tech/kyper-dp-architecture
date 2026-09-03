@@ -27,7 +27,7 @@ Two sibling areas in the tenant plane's environment container:
   hands off exclusively to model registry and experiments; classified/raw
   reads under audited grants.
 
-Registries remain the only producer-to-runtime handoff (ADR-0004).
+Registries remain the only producer-to-runtime handoff ([ADR-0004](0004-registries-only-handoff.md)).
 Tooling differences stay out of the model — they are bindings.
 
 ## Consequences

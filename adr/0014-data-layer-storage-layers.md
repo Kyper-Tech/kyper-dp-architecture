@@ -42,10 +42,10 @@ Layers and stores:
 Flows: orchestration compacts hot -> curated on the TS store's retention
 schedule; chunking/embedding and feature pipelines (scheduled, per
 environment) materialize curated -> serving; all analytical reads stay
-catalog-mediated. Zones (ADR-0006) apply across all layers.
+catalog-mediated. Zones ([ADR-0006](0006-shared-zoned-data-layer.md)) apply across all layers.
 
 Products (Timescale/QuestDB/Influx; Qdrant/Milvus/pgvector) are bindings
-per tenant class with contract profiles written before binding (ADR-0007).
+per tenant class with contract profiles written before binding ([ADR-0007](0007-object-store-contract-bindings.md)).
 
 ## Consequences
 - DR posture differs per layer and must not be averaged:

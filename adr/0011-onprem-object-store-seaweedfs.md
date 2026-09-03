@@ -7,16 +7,16 @@ affects: [KYP-T-DATA-01, KYP-T-DATA-25]
 # Bind the on-prem object store contract to SeaweedFS
 
 ## Context
-ADR-0007 left the onprem product for the s3-object-api contract TBD. On-prem
+[ADR-0007](0007-object-store-contract-bindings.md) left the onprem product for the object-store contract TBD. On-prem
 tenant footprints are small and operationally constrained (edge-adjacent);
 the team operating them is not a storage team. The contract profile in
-architecture/bindings/storage.yaml defines what the product must satisfy.
+[architecture/bindings/storage.yaml](../architecture/bindings/storage.yaml) defines what the product must satisfy.
 
 ## Decision
 SeaweedFS is the onprem binding for KYP-T-DATA-01. It satisfies the
 profile's required rows (object CRUD, ranged reads, multipart, presigned
 URLs, encryption at rest) with one compensation: its IAM is coarser than
-S3/RGW, so the curated-zone write rule (ADR-0006) is enforced by dedicated
+S3/RGW, so the curated-zone write rule ([ADR-0006](0006-shared-zoned-data-layer.md)) is enforced by dedicated
 per-zone identities plus mediation by the access policy component
 (KYP-T-DATA-25) — not by store-native policy documents.
 
@@ -36,4 +36,5 @@ per-zone identities plus mediation by the access policy component
 - Ceph RGW: strongest IAM row and block/FS double-duty, but operationally
   too heavy for the target on-prem footprints.
 - Raw PVCs: block/filesystem volumes expose no object API, presigned URLs
-  or IAM — they cannot satisfy s3-object-api; every candidate runs on PVCs.
+  or IAM — they cannot satisfy the object-store contract; every candidate
+  runs on PVCs.

@@ -10,7 +10,7 @@ Industrial customers require data sovereignty and isolation; some are on-prem.
 ## Decision
 Silo tenancy: full tenant plane per customer. Shared control plane only.
 ## Consequences
-Cost is multiplicative per tenant; idle-scale and environment count matter (ADR-0005).
+Cost is multiplicative per tenant; idle-scale and environment count matter ([ADR-0005](0005-two-environments.md)).
 Tenant registry records tenant class -> substrate -> availability posture.
 ## Rejected alternatives
 Pooled multi-tenant data/serving.

@@ -68,7 +68,7 @@ model {
       streams     = service 'Streams'       { metadata { kypId 'KYP-T-DATA-13' } }
 
       objectStore = store 'Object store' {
-        technology 'S3-compatible object API'
+        technology 'object-store contract'
         metadata { kypId 'KYP-T-DATA-01'; class 'analytical'; adr 'ADR-0007' }
       }
       tables      = store 'Tables'               { metadata { kypId 'KYP-T-DATA-02'; class 'analytical' } }

@@ -8,27 +8,34 @@
 # listed under `not-relied-upon`; that is where bound products differ.
 
 contract-profiles:
-  s3-object-api:
+  object-store:
     adr: ADR-0007
     required:
       - object CRUD (PUT/GET/DELETE) and prefix LIST
       - ranged (partial) reads
       - multipart upload
-      - presigned URLs (SigV4 or equivalent)
+      - presigned URLs (time-limited, signed)
       - per-zone access control expressible in the store's own IAM
         (curated zone writable only by prod orchestration identity — ADR-0006,
         enforced via access policy KYP-T-DATA-25 over env zones KYP-T-DATA-22)
       - server-side encryption at rest
+      - an S3-compatible endpoint reachable by components that need one,
+        native or via an interoperability endpoint. S3 is an access protocol
+        here, not the contract; the rows above are the contract.
     not-relied-upon:
       - S3 versioning API (point-in-time recovery is the backup band's concern)
       - object tagging via S3 API (classification lives in the catalog, KYP-T-DATA-05)
       - S3 bucket policy documents (zone grants are KYP-T-DATA-25's concern)
       - ETag == MD5 (integrity checks must use explicit checksums)
       - S3 Select, event notifications via S3 API
+      - one uniform wire protocol across bindings; each binding declares its
+        own in `protocol`
     notes: >
-      cloud-gcp satisfies the profile partly natively (gs:// connectors for
-      the data stack) and partly via the S3 interoperability endpoint
-      (HMAC keys + SigV4). cloud-aws and onprem candidates are S3-wire.
+      Components that reach the store through the data stack use whichever
+      connector their binding provides (gs:// on GCP, s3:// elsewhere).
+      Components that speak an S3 SDK directly rely on the S3-compatible
+      endpoint row. A candidate product satisfying every required row may
+      bind whatever its native protocol is.
 
   postgres-wire:
     adr: ADR-0007
@@ -41,11 +48,12 @@ contract-profiles:
         component may use one)
 
 KYP-T-DATA-01:
-  contract: s3-object-api
+  contract: object-store
   bindings:
-    cloud-gcp: { product: GCS,   posture: managed-regional }
-    cloud-aws: { product: S3,    posture: managed-regional }
-    onprem:    { product: SeaweedFS, posture: self-run, adr: ADR-0011,
+    cloud-gcp: { product: GCS, posture: managed-regional,
+                 protocol: "gcs-native (gs://), plus S3 interoperability endpoint" }
+    cloud-aws: { product: S3,  posture: managed-regional, protocol: s3 }
+    onprem:    { product: SeaweedFS, posture: self-run, adr: ADR-0011, protocol: s3,
                  note: "SeaweedFS IAM is coarser than S3/RGW, so the
                         curated-zone write rule (ADR-0006) is enforced via
                         dedicated identities plus access policy mediation
