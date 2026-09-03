@@ -28,6 +28,7 @@ superseded. Nothing is accepted yet — the baseline is under review.
 | [ADR-0017](../../adr/0017-customer-system-integration-seam.md) | Customer systems integrate through named boundaries, one altitude per source | KYP-T-DATA-10, KYP-T-DATA-11, KYP-E-RT |
 | [ADR-0018](../../adr/0018-customer-identity-federation.md) | Customer users federate to the customer's IdP, per tenant | KYP-T-TRUST-01, KYP-T-TRUST-02, KYP-E-SITE-02 |
 | [ADR-0019](../../adr/0019-onprem-object-store-requirements.md) | On-prem object store requirements; no product selected | KYP-T-DATA-01 |
+| [ADR-0021](../../adr/0021-workspace-instances-differ-by-environment.md) | Workspace instances differ per environment in purpose and grants | KYP-T-DEVWS, KYP-T-MLWS, KYP-T-DATAWS |
 
 Rejected options that must not be re-proposed are listed in
 [CLAUDE.md](../../CLAUDE.md) ("Rejected options") with the ADR that closed

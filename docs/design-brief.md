@@ -93,6 +93,26 @@ modules; version pins.
 | Application | App runtime, API gateway, alerting (authority), public ingress | Stateless; the only public entry point. |
 | Orchestration | Ingest, transform, scoring, retraining trigger, idle scale | One scheduler per environment; owns all recurring work incl. scale-to-zero. |
 
+Every area above exists once per environment, but a workspace's two
+instances are not copies that differ by quota — they differ by purpose and
+by grants ([ADR-0021](../adr/0021-workspace-instances-differ-by-environment.md)):
+
+| Workspace instance | For | May |
+|---|---|---|
+| nonprod | Development: models, pipelines, applications | Read per classification; write only its own sandbox. No production writes. |
+| prod | Operating on production: investigating and correcting production work | Elevated grants, including writes where the user's identity permits. Not a development environment. |
+
+Grants are per user, not per instance: the instance sets the ceiling, the
+grant sets the actual scope. The curated zone stays writable only by the
+prod orchestration identity — a curated change is made by promoting a
+pipeline, or under a break-glass grant that is named, expiring and audited.
+Nobody writes curated by hand from a workspace.
+
+A model is developed once and promoted, not rebuilt per environment: it
+leaves the ML workspace as a model-registry entry, and that entry is
+promoted to nonprod serving and then to prod serving
+([ADR-0004](../adr/0004-registries-only-handoff.md)).
+
 ### Data layer — analytical stores shared and zoned, the rest per environment ([ADR-0006](../adr/0006-shared-zoned-data-layer.md))
 
 | Group | Contains |
