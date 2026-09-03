@@ -147,10 +147,12 @@ Edge never trains, never holds the catalog. Store-and-forward is the one
 intentional co-location of state and behaviour outside the data layer.
 
 ## Contracts (the seam pattern)
-Data contract at ingestion (schema, semantics, quality thresholds, delivery; violations
-quarantine; breaking change = new version). Model contract = registry entry (schemas,
-evaluation thresholds met, per-target variants incl. quantized edge bundles). Deploy
-contract = signed, scanned artifact verified by admission.
+
+Every handoff is governed by a contract rather than by convention: a data
+contract at ingestion, a model contract as a registry entry, a deploy
+contract verified by admission. Each is enforced by a named component, and
+a breaking change is always a new version. Detail in
+[crosscutting concepts](arc42/08-crosscutting-concepts.md).
 
 ## Accepted costs
 

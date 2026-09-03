@@ -160,9 +160,11 @@ contract, for this tenant class?
     a component (§2, keyed by its KYP-ID §7) states a contract
     a binding maps:  contract x tenantClass (§1)  ->  product + posture
 
-- contract — the promise the component states in the model (e.g. an
-  object-store contract). A capability, never a product or one vendor's
-  protocol. The only thing other components may depend on.
+- contract (capability contract) — the promise the component states in the
+  model (e.g. an object-store contract). A capability, never a product or
+  one vendor's protocol. The only thing other components may depend on.
+  Distinct from the seam contracts — data, model and deploy — which govern
+  handoffs rather than substitutability (arc42 section 8).
 - contract profile — the contract made explicit: `required` rows components
   may rely on, `not-relied-upon` rows they must not.
 - product — a concrete technology fulfilling the contract. NEVER named in
