@@ -102,11 +102,30 @@ by grants ([ADR-0021](../adr/0021-workspace-instances-differ-by-environment.md))
 | nonprod | Development: models, pipelines, applications | Read per classification; write only its own sandbox. No production writes. |
 | prod | Operating on production: investigating and correcting production work | Elevated grants, including writes where the user's identity permits. Not a development environment. |
 
-Grants are per user, not per instance: the instance sets the ceiling, the
-grant sets the actual scope. The curated zone stays writable only by the
-prod orchestration identity — a curated change is made by promoting a
-pipeline, or under a break-glass grant that is named, expiring and audited.
-Nobody writes curated by hand from a workspace.
+Credentials and authorization are separate. Sessions and jobs authenticate
+as a **workload identity** belonging to the instance — never with a user's
+credentials, so no human secret reaches a runtime. The user's identity
+travels with the request as context, and the catalog or query engine
+resolves what is actually visible: the instance ceiling intersected with
+that user's own grant. This is why access is catalog-mediated at all: a
+direct store connection carries only the workload identity, loses the user,
+and collapses everyone to the ceiling. A scheduled job has no live user, so
+it runs at its workload identity's scope with the submitting user recorded.
+
+The ceiling is technical, not policy: each instance has its own workload
+identity holding only that instance's permissions, and **people hold no
+data-plane permissions at all**. So the same person, working in a
+development instance, cannot write production data even when entitled to
+write it elsewhere — the principal making the request has no such
+permission — while in a production instance the same person can. If a
+person held direct permissions on a store, their session could act as
+themselves and step over the ceiling; that is the rule everything else
+rests on.
+
+The curated zone stays writable only by the prod orchestration identity — a
+curated change is made by promoting a pipeline, or under a break-glass
+grant that is named, expiring and audited. Nobody writes curated by hand
+from a workspace.
 
 A model is developed once and promoted, not rebuilt per environment: it
 leaves the ML workspace as a model-registry entry, and that entry is

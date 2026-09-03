@@ -31,9 +31,50 @@ Workspace instances are environment-scoped and differ by purpose:
   identity permits. Not a development environment: model and pipeline
   development do not happen here.
 
-Grants are per user, not per instance. Two users in the same instance may
-hold different scopes; the instance sets the ceiling, the grant sets the
-actual scope.
+### Credentials and authorization are separate
+Sessions and jobs authenticate as a **workload identity** scoped to the
+workspace instance. They never run with a user's credentials, so no human
+secret reaches a runtime and a job can safely outlive the session that
+started it.
+
+Authorization is evaluated per user. The user's identity travels with the
+request as context — a claim, not a credential — and the mediating service
+(catalog, query engine) computes the effective scope:
+
+    effective scope = instance ceiling ∩ the user's own grant
+
+This is why access is catalog-mediated and direct store connections are
+forbidden ([ADR-0006](0006-shared-zoned-data-layer.md)): a direct
+connection carries only the workload identity, loses the user context, and
+collapses every user to the instance ceiling.
+
+Detached work has no live user. A scheduled job runs at its workload
+identity's own scope, with the submitting user recorded and the data scope
+fixed at submission.
+
+The audit trail records both: which workload acted, and on whose behalf.
+
+### The ceiling is technical, not policy
+Three rules make the ceiling hold rather than merely describe it:
+
+1. **One workload identity per workspace instance**, never shared between
+   instances. Sharing one merges the ceilings.
+2. **The instance's workload identity does not possess permissions beyond
+   its ceiling.** A development instance holds no write permission on
+   production data at all, rather than holding it and being denied by
+   policy. The ceiling then survives a policy-evaluation bug, because the
+   principal making the call cannot perform the operation.
+3. **Humans hold no data-plane permissions.** A person's entitlements
+   exist only in the access-policy layer, which the mediating service
+   consults. If a human held direct permissions on a store, their session
+   could act as themselves instead of as the instance's workload identity
+   and step over the ceiling entirely. This is the rule the whole scheme
+   rests on.
+
+The effect: the same person, in a development instance, cannot write
+production data even when entitled to write it elsewhere, because the
+principal making the request has no such permission. In a production
+instance the same person can, because there the workload identity does.
 
 The curated-zone rule is unchanged and the prod instance is not a way
 around it: curated stays writable only by the prod orchestration identity.
@@ -53,6 +94,18 @@ workspace.
   workspace, because the instance sets the ceiling.
 - Access review has to cover both the instance ceiling and the per-user
   grants, since either alone tells only half the story.
+- The mediating service becomes a per-user enforcement point, not just an
+  abstraction: it must accept and evaluate propagated user context, and a
+  gap there silently grants every user the instance ceiling.
+- Revoking a user's grant takes effect at the next mediated request, but a
+  detached job keeps the scope it was submitted with until it ends.
+- Provisioning must create a distinct workload identity per workspace
+  instance and grant it only its ceiling; getting this wrong is silent,
+  since everything keeps working while the ceiling is gone.
+- Granting a person direct permissions on a store — however convenient in
+  an incident — breaks the ceiling for every instance at once. Emergency
+  access goes through the break-glass grant, not through a direct
+  permission.
 
 ## Rejected alternatives
 - Workspace instances as identical copies differing by quota: makes the
