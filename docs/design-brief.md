@@ -51,6 +51,14 @@ Trust rules, one per seam:
    In pull mode the tenant's connectors DO dial out to the customer's
    system, wherever it is hosted, with credentials held in that tenant's
    Secrets and every use audited. ([ADR-0001](../adr/0001-three-planes-pull-only.md))
+4. **Site -> customer systems (local ingestion).** A site reads plant
+   systems on the local network; that is why it exists. Credentials for
+   those reads are held at the site and scoped to it, so a compromised
+   site exposes one plant's sources, never the tenant's. Proposed in
+   [ADR-0017](../adr/0017-customer-system-integration-seam.md): a named
+   boundary for these reads (site OT gateway), and the rule that each
+   source is ingested at exactly one altitude — site or tenant, never
+   both.
 
 ## Control plane (thin by design; SaaS-lens analysis pending)
 
@@ -125,8 +133,8 @@ retraining and batch scoring stay in the tenant plane, always.
 A site is one deployment of this plane at one location, classed by
 siteClass (connected | remote).
 The site is only what Kyper deploys: customer systems at the same
-location are externals, reached through the ingestion seam (trust
-rule 3), never through the site.
+location are externals, not parts of the site, even though the site reads
+them locally (trust rule 4).
 
 | Area | Contains | Rule |
 |---|---|---|
