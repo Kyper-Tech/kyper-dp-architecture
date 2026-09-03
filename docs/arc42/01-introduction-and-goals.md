@@ -7,7 +7,7 @@ customer. It ingests OT/plant data, manages it in a governed data layer,
 supports model development and training, serves models and applications, and
 extends inference to factory sites that may lose WAN connectivity for days.
 
-The full narrative is in the [design brief](../design-brief.md) (v13); this
+The full narrative is in the [design brief](../design-brief.md); this
 section states only the goals and their drivers.
 
 ## Top quality goals
@@ -42,4 +42,4 @@ section states only the goals and their drivers.
 | Data scientists / developers | Separate dev and ML workspaces, with different tooling, processes and data scope | [ADR-0012](../../adr/0012-split-dev-ml-workspaces.md) |
 | Kyper operations | Operate a fleet of tenant silos from one control plane | control plane ([ADR-0001](../../adr/0001-three-planes-pull-only.md)) |
 | Security reviewers | Trust boundaries as named components; zone model | placement rules in [CLAUDE.md](../../CLAUDE.md); [analysis plan](../analysis-plan.md) phase 3 |
-| Business / non-git audience | Discoverable narrative without Git access | Notion portal, links only ([ADR-0009](../../adr/0009-architecture-toolchain.md)) |
+| Business / non-git audience | Discoverable narrative without Git access | The CI-published static site ([ADR-0009](../../adr/0009-architecture-toolchain.md)) |

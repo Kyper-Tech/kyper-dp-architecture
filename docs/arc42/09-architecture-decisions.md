@@ -17,7 +17,7 @@ superseded. Nothing is accepted yet — the baseline is under review.
 | [ADR-0005](../../adr/0005-two-environments.md) | Two environments: nonprod and prod | KYP-T |
 | [ADR-0006](../../adr/0006-shared-zoned-data-layer.md) | Data layer: sharing follows store class, access follows purpose | KYP-T-DATA and its stores |
 | [ADR-0007](../../adr/0007-object-store-contract-bindings.md) | Object store contract in model; products as bindings | KYP-T-DATA-01 |
-| [ADR-0009](../../adr/0009-architecture-toolchain.md) | Taxonomy + arc42 + LikeC4 + CI gate; Notion links only | — |
+| [ADR-0009](../../adr/0009-architecture-toolchain.md) | Taxonomy + arc42 + LikeC4 model-as-code, validated and published by CI | — |
 | [ADR-0010](../../adr/0010-alerting-authority.md) | Tenant alerting authoritative; edge is a replica | KYP-T-APP-03, KYP-E-RT-04 |
 | [ADR-0011](../../adr/0011-onprem-object-store-seaweedfs.md) *(superseded by ADR-0019)* | On-prem object store binding: SeaweedFS | KYP-T-DATA-01 |
 | [ADR-0012](../../adr/0012-split-dev-ml-workspaces.md) | Dev and ML are separate workspace areas | KYP-T-DEVWS, KYP-T-MLWS |

@@ -18,5 +18,5 @@ they never restate a fact that has another authoring surface.
 | 8 | [Crosscutting Concepts](08-crosscutting-concepts.md) | filled |
 | 9 | [Architecture Decisions](09-architecture-decisions.md) | filled |
 | 10 | [Quality Requirements](10-quality-requirements.md) | seeded |
-| 11 | [Risks and Technical Debt](11-risks-and-technical-debt.md) | skeleton |
+| 11 | [Risks and Technical Debt](11-risks-and-technical-debt.md) | filled |
 | 12 | [Glossary](12-glossary.md) | skeleton |

@@ -17,7 +17,7 @@ scenarios — these files link to their rows, never restate them.
 - Why a requirement is satisfied this way -> the ADR (cited, not
   paraphrased).
 - How well / how fast / how resilient -> a quality scenario in arc42 §10.
-- Analysis findings -> Notion register (links back by REQ id).
+- Analysis findings -> the findings register (links back by REQ id).
 
 ## Files
 

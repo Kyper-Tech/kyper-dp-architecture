@@ -139,7 +139,7 @@ Two disambiguations:
 KYP-<plane>-<AREA>-<nn>   plane ∈ {C, T, E} (control, tenant, edge);
 AREA is the area slug; nn two digits. Area-level IDs omit nn (KYP-T-DATA).
 IDs are immutable; renames keep the ID. The KYP-ID is the join key across
-model, ADRs, bindings, Notion registers and Linear issues.
+model, ADRs, bindings and Linear issues.
 
 ## 8. Zones (partitions of the data layer — [ADR-0006](../adr/0006-shared-zoned-data-layer.md))
 A zone is a partition of the data layer's stores carrying exactly one

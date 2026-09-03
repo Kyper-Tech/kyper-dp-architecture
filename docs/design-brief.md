@@ -1,4 +1,4 @@
-# Kyper platform architecture — design brief (v13, 2026-08-31)
+# Kyper platform architecture — design brief
 
 This brief tells the story of the Kyper platform architecture: what the
 platform is made of, how the parts relate, and which decisions gave it this
@@ -202,4 +202,5 @@ what an auditor would be shown — belongs in
 ISO/IEC 23053 (vocabulary), ISO/IEC 5338/42001/23894/5259, CNCF CNAI + Data-on-K8s AI
 whitepaper, AWS Well-Architected ML Lens + SaaS Lens, Google MLOps practitioners guide,
 IIC IIRA v1.10 (tiers, gateway pattern = sync layer), IEC 62443 zones/conduits, OpenInfra
-Edge-AI whitepaper (applied in v13: site management, local preprocessing/alerting, traffic priority).
+Edge-AI whitepaper (already applied: site management, local preprocessing and alerting,
+traffic priority per siteClass).

@@ -2,12 +2,11 @@
 
 ## What this repo is
 Source of truth for the Kyper platform architecture: element taxonomy, LikeC4
-model, ADRs, arc42 narrative. CI renders and publishes a static site. Notion is
-a portal that only LINKS here; Linear holds tasks. This repo never writes to
-either.
+model, ADRs, arc42 narrative. CI renders and publishes a static site.
+Linear holds tasks and cites what it implements. This repo never writes to it.
 
 ## Read first, in this order
-1. [docs/design-brief.md](docs/design-brief.md)      — the architecture (v13) and every decision behind it
+1. [docs/design-brief.md](docs/design-brief.md)      — the architecture and every decision behind it
 2. [architecture/taxonomy.md](architecture/taxonomy.md)  — kinds, relation kinds, axes, KYP-ID scheme
 3. adr/                      — accepted decisions; never re-open one without a new ADR
 4. [docs/analysis-plan.md](docs/analysis-plan.md)     — the standards-conformance work plan (Linear project)
@@ -22,8 +21,8 @@ either.
   metadata — never elements, never duplicated subtrees.
 - Every element carries metadata.kypId (unique). Every structural change cites
   an ADR id in metadata.adr on the affected element(s).
-- One authoring surface per fact: model/decision facts here; analysis findings
-  in Notion; tasks in Linear. Other tools link, never restate.
+- One authoring surface per fact: model, decision and narrative facts live
+  here; tasks live in Linear. Other tools link, never restate.
 - A new kind of store is a KIND only if its boundary rule differs (see
   registry). Different technology = metadata.class, not a kind.
 - Run the gate before proposing any commit:
@@ -52,7 +51,7 @@ either.
 - source repo / artifact repo / model registry inside a space -> [ADR-0004](adr/0004-registries-only-handoff.md)
 - product names at component level                 -> [ADR-0007](adr/0007-object-store-contract-bindings.md)
 - "message broker" as the named edge boundary      -> [ADR-0003](adr/0003-generic-sync-layer.md) (generic sync layer)
-- CI writing registers or diagrams into Notion     -> [ADR-0009](adr/0009-architecture-toolchain.md)
+- CI writing registers or diagrams into an external portal -> [ADR-0009](adr/0009-architecture-toolchain.md)
 
 ## Working conventions
 - Branch per Linear issue: KYP-<n>-<slug>. PR description names the finding
@@ -61,4 +60,4 @@ either.
   flip to "accepted" in the merging PR. Add the affected KYP-IDs to `affects:`.
 - Diagrams are views in [architecture/model/](architecture/model/)views/. Never hand-draw a diagram
   that the model can render.
-- Keep [docs/design-brief.md](docs/design-brief.md) accurate: it is the narrative the portal links to.
+- Keep [docs/design-brief.md](docs/design-brief.md) accurate: it is the narrative CI publishes.

@@ -4,7 +4,7 @@ Exit criterion: every register row classified (gap / decision-needed / accepted-
 validated) — not every source exhausted.
 
 ## Phase 0 — Baseline and sources (~1d)
-1. Component register with KYP-IDs (generated from model; mirrored as text IDs in Notion).
+1. Component register with KYP-IDs, generated from the model.
 2. Acquire sources, record versions.
    - ISO/IEC 23053: https://www.iso.org/standard/74438.html
    - JTC 1/SC 42 catalogue (5338, 5259, 23894, 42001): https://www.iso.org/committee/6794475.html
