@@ -1,10 +1,18 @@
 # Kyper platform architecture — design brief (v13, 2026-08-31)
 
-Component level, capability names only. Products are bindings, not components
-([ADR-0007](../adr/0007-object-store-contract-bindings.md)): the model states
-the contract a component promises; the concrete product fulfilling it per
-tenant class lives in [architecture/bindings/](../architecture/bindings/),
-keyed by KYP-ID x tenant class.
+This brief tells the story of the Kyper platform architecture: what the
+platform is made of, how the parts relate, and which decisions gave it this
+shape. Read it when you need the whole picture in one pass. The model, the
+diagrams, the ADRs and the per-area requirement files carry the detail;
+this document explains how they fit together.
+
+One reading rule holds throughout: every name here is a capability, not a
+product. The model states what a component promises (its contract); which
+technology fulfills that promise is decided per tenant class in
+[architecture/bindings/](../architecture/bindings/)
+([ADR-0007](../adr/0007-object-store-contract-bindings.md)). So "object
+store" means "keeps objects, speaks an S3-compatible API", and whether that
+is GCS, S3 or SeaweedFS depends on where the tenant runs.
 
 ## Planes
 | Plane | Instances | Operated by | Network direction |
