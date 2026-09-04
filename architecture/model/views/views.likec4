@@ -1,8 +1,8 @@
 views {
   view index {
     title 'Kyper platform — planes'
-    include control, tenant, edge
-    rank source { control }
+    include factory, control, common, tenant, edge
+    rank source { factory }
     rank sink { edge }
     autoLayout TopBottom
   }

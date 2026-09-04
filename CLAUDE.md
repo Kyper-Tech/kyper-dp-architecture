@@ -37,7 +37,8 @@ Linear holds tasks and cites what it implements. This repo never writes to it.
 2. Every producer-to-runtime handoff goes through a registry (model registry,
    artifact repo, catalog for data). No direct paths.
 3. Every trust boundary is a named component: OT gateway (in), public ingress
-   (out), sync layer (edge), staff federation (control plane).
+   (out), sync layer (edge), staff federation (control plane), common
+   services entry (shared plane).
 4. Cross-cutting concerns (identity, secrets, keys, audit, admission, backup,
    metering, network policy) exist once, in platform bands, and are consumed —
    never re-implemented inside an area.

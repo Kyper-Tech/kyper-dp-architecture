@@ -41,3 +41,9 @@ Edge plane:
 
 Control plane (no areas yet — plane level):
 - [KYP-C](KYP-C.md) — control plane
+
+Product factory (plane level):
+- [KYP-F](KYP-F.md) — product factory
+
+Common services (plane level; design open):
+- [KYP-S](KYP-S.md) — common services

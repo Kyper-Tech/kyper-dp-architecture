@@ -47,3 +47,5 @@ Tooling differences stay out of the model — they are bindings.
   raw-read trust delta hides inside a single area's policy.
 - Different products per profile inside one area: does not address the
   differing handoff targets and data scopes.
+
+Scope: the product factory's workspaces split by the same boundary-rule test ([ADR-0022](0022-product-factory-plane.md)).

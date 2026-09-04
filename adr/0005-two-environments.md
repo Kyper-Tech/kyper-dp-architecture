@@ -15,3 +15,5 @@ Full-scale rehearsal = nonprod run against curated read-only. Environments are a
 (metadata), never elements.
 ## Rejected alternatives
 dev/stage/prod.
+
+Scope: the env axis is a tenant-plane concept; the product factory's reference environment is not an instance of it ([ADR-0022](0022-product-factory-plane.md)).

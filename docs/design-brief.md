@@ -17,16 +17,18 @@ protocol it speaks — depends on where the tenant runs.
 
 ## Planes
 
-The architecture's first cut is into three planes. A plane is the highest
+The architecture's first cut is into five planes. A plane is the highest
 level of structure: an operational domain that bundles the capabilities
 which must be run and trusted together, with its own trust stance and its
 own instancing rule. Nothing runs "as a plane" (planes are groupings, not
 components); every component in the platform lives in exactly one of the
-three.
+five.
 
 | Plane | Instances | Operated by | Network direction |
 |---|---|---|---|
 | Control | 1 | Kyper | never initiates into a tenant |
+| Product factory | 1 | Kyper | publishes golden artifacts to control; no relation to any tenant |
+| Common services | TBD (expected: one per jurisdiction) | Kyper | never initiates into a tenant; opted-in tenants reach it outbound |
 | Tenant | one per customer | Kyper-managed, customer-owned data | pulls from control |
 | Edge | 0..N per tenant, one per location (a deployment = a site) | tenant plane | exchanges with tenant only via sync layer |
 
@@ -42,7 +44,7 @@ Trust rules, one per seam:
    config flow downward, but over connections the tenant opened (agents
    poll and pull, GitOps-style). No listening endpoint and no credential
    lets the control plane reach into a customer environment, so
-   compromising it grants access to zero customer networks. ([ADR-0001](../adr/0001-three-planes-pull-only.md))
+   compromising it grants access to zero customer networks. ([ADR-0001](../adr/0001-plane-structure.md))
 2. **Tenant <-> edge (sync).** Neither side dials the other; both meet at
    the sync layer. Sites connect outbound to it, pushing telemetry and
    alert acks up and fetching signed bundles down. Nothing on the tenant
@@ -50,7 +52,7 @@ Trust rules, one per seam:
 3. **Tenant -> customer systems (ingestion).** Push or pull, per tenant.
    In pull mode the tenant's connectors DO dial out to the customer's
    system, wherever it is hosted, with credentials held in that tenant's
-   Secrets and every use audited. ([ADR-0001](../adr/0001-three-planes-pull-only.md))
+   Secrets and every use audited. ([ADR-0001](../adr/0001-plane-structure.md))
 4. **Site -> customer systems (local ingestion).** A site reads plant
    systems on the local network; that is why it exists. Credentials for
    those reads are held at the site and scoped to it, so a compromised
@@ -59,6 +61,14 @@ Trust rules, one per seam:
    boundary for these reads (site OT gateway), and the rule that each
    source is ingested at exactly one altitude — site or tenant, never
    both.
+5. **Factory -> control (publication).** The product factory publishes
+   signed, scanned, SBOM-carrying artifacts into the control plane's golden
+   registry. That is its only outbound path; it has no relation to any
+   tenant, in either direction. ([ADR-0022](../adr/0022-product-factory-plane.md))
+6. **Tenant -> common services (opt-in).** Only a tenant that has opted in
+   reaches common services, outbound; common services never initiates into
+   a tenant. What happens inside — isolation, batching, jurisdiction — is
+   still to be designed. ([ADR-0023](../adr/0023-common-services-plane.md))
 
 ## Control plane (thin by design; SaaS-lens analysis pending)
 
@@ -80,6 +90,27 @@ means "no updates today", never a production stop.
 The tenant registry carries: tenant class -> storage substrate -> availability
 posture; siteClass per site; ingestion mode (push | pull); enabled
 modules; version pins.
+
+## Product factory ([ADR-0022](../adr/0022-product-factory-plane.md))
+
+The product factory is where Kyper builds, tests and signs the platform
+and the shared models — the origin of everything the control plane
+distributes. One instance, Kyper operated.
+
+| Area | Contains | Rule |
+|---|---|---|
+| Product dev workspace | Sessions, build/test jobs, environment images | Ephemeral; publishes only to factory registries. |
+| Shared-model workspace | Notebook sessions, training jobs | Synthetic, public or consented data only; never one customer's data without consent. |
+| Factory registries | Source repo, artifact repo, model registry, experiments | The factory's handoff seam. |
+| Reference environment | Reference runtime | Tenant-shaped, synthetic data only; where releases are tested. Not a tenant. |
+| Factory operations | CI/CD, scanning | Publishes golden artifacts to the control plane — the only outbound path. |
+| Factory trust | Secrets, signing keys | The signing keys never leave the factory. Staff enter via the control plane's staff federation. |
+
+Customer data does not enter the factory. Work that needs real data happens
+in the tenant's production workspace. Where that is impossible, a customer
+may consent to an extract, exported by the tenant into an isolated enclave
+and destroyed at expiry — never pulled, never copied into a workspace or a
+registry.
 
 ## Tenant plane
 ### Environment container — instantiated as nonprod and prod ([ADR-0005](../adr/0005-two-environments.md))
@@ -185,6 +216,29 @@ them locally (trust rule 4).
 Edge never trains, never holds the catalog. Store-and-forward is the one
 intentional co-location of state and behaviour outside the data layer.
 
+## Common services ([ADR-0023](../adr/0023-common-services-plane.md)) — design open
+
+Common services offers what is uneconomic to run per tenant — shared GPU
+capacity and the serving of shared models — to tenants that choose to join
+the shared network. Participation is opt-in per tenant, recorded in the
+tenant registry, default off: a tenant that has not opted in never has a
+workload placed there or a request routed there. For tenants that decline,
+nothing changes.
+
+Two capabilities are intended, a shared capacity pool (hardware assigned to
+one tenant at a time) and shared-model inference. Neither is designed yet.
+Isolation model, batching posture, instancing dimension (jurisdiction
+expected), eligible tenant classes, blast radius and the classification of
+request data in flight are all open and listed in the ADR.
+
+**Open — how a tenant reaches common services is not yet modeled.** The
+taxonomy has no relation kind for a tenant invoking a service across a
+plane boundary: `readsVia` is about state and `syncsWith` is asynchronous,
+and neither fits a request-response call. Until that kind is decided, the
+seam exists as a named boundary (common services entry) and as trust rule 6,
+but no arrow is drawn between the tenant plane and common services in any
+diagram. That absence is deliberate, not an omission.
+
 ## Contracts (the seam pattern)
 
 Every handoff is governed by a contract rather than by convention: a data
@@ -235,6 +289,11 @@ what an auditor would be shown — belongs in
   shape is: tenant registry and fleet health per jurisdiction, golden
   artifacts global or mirrored. Distance and latency are not triggers —
   the control plane sits in no runtime path.
+- Common services: the relation kind for a tenant invoking a shared service
+  across a plane boundary. None of the existing kinds fits a
+  request-response call; until one is decided, the tenant → common services
+  seam is a named boundary and a trust rule, but not a drawn relation
+  ([ADR-0023](../adr/0023-common-services-plane.md)).
 - Federated learning across tenants (future option; keep compatible, do not build)
 
 ## Standards to map against (see [docs/analysis-plan.md](analysis-plan.md))

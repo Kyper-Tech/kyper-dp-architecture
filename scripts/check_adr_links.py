@@ -16,6 +16,12 @@ for c in classes:
 stores = len(re.findall(r"= store ", model))
 if stores != len(classes): errors.append(f"{stores - len(classes)} store(s) missing metadata.class")
 for adr, p in adrs.items():
-    for kid in re.findall(r"KYP-[A-Z]-[A-Z]+(?:-\d{2})?|KYP-[CTE]\b", p.read_text().split("---")[1]):
-        if kid not in ids and kid not in {"KYP-C", "KYP-T", "KYP-E"}: errors.append(f"{adr} affects unknown {kid}")
+    fm = p.read_text().split("---")[1]
+    for kid in re.findall(r"KYP-[A-Z]-[A-Z]+(?:-\d{2})?|KYP-[CFSTE]\b", fm):
+        if kid not in ids and kid not in {"KYP-C", "KYP-F", "KYP-S", "KYP-T", "KYP-E"}: errors.append(f"{adr} affects unknown {kid}")
+    # amends: every amended ADR must exist and reference the amender back
+    m = re.search(r"^amends:\s*\[([^\]]*)\]", fm, re.M)
+    for target in (t.strip() for t in m.group(1).split(",") if t.strip()) if m else []:
+        if target not in adrs: errors.append(f"{adr} amends missing {target}")
+        elif adr not in adrs[target].read_text(): errors.append(f"{target} does not reference its amender {adr}")
 print("\n".join(errors) or "gate: ok"); sys.exit(1 if errors else 0)

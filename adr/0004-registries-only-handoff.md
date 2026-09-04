@@ -15,3 +15,5 @@ Losing a workspace costs only uncommitted work. Catalog stays in data management
 data registry — accepted asymmetry.
 ## Rejected alternatives
 Registries inside spaces; direct workspace->runtime deploy paths.
+
+Scope: applies to every plane's registries, including the product factory's ([ADR-0022](0022-product-factory-plane.md)).

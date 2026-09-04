@@ -24,8 +24,8 @@ Elements form two levels:
 external belongs to neither level: it is an outside actor.
 
 - plane    — top-level operational domain with its own trust stance and its
-             own instancing rule. Exactly three exist
-             (control plane, tenant plane, edge plane).
+             own instancing rule. Five exist: control, product
+             factory, common services, tenant, edge.
 - area     — grouping of components inside exactly one plane, sharing ONE
              boundary rule
              (data layer, serving, ML workspace, trust services).
@@ -126,6 +126,8 @@ location -> site, env value -> environment), never after the plane:
 | Term (class) | Instance noun | How many |
 |---|---|---|
 | control plane | the control plane (singleton: class and instance coincide, so no separate noun exists) | exactly 1 |
+| product factory plane | the product factory (singleton, as the control plane) | exactly 1 |
+| common services plane | a region — expected: instantiated per jurisdiction; under investigation ([ADR-0023](../adr/0023-common-services-plane.md)) | TBD |
 | tenant plane | a tenant | one per customer |
 | environment container (the env-scoped subset of tenant areas, §3) | an environment | two per tenant today: its nonprod and its prod |
 | edge plane | a site | 0..N per tenant, one per location |
@@ -136,7 +138,8 @@ Two disambiguations:
 - fleet — the set of all tenants; the control plane's object of management.
 
 ## 7. ID scheme
-KYP-<plane>-<AREA>-<nn>   plane ∈ {C, T, E} (control, tenant, edge);
+KYP-<plane>-<AREA>-<nn>   plane ∈ {C, F, S, T, E} (control, factory,
+shared services, tenant, edge);
 AREA is the area slug; nn two digits. Area-level IDs omit nn (KYP-T-DATA).
 IDs are immutable; renames keep the ID. The KYP-ID is the join key across
 model, ADRs, bindings and Linear issues.

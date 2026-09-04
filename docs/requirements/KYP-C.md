@@ -9,8 +9,8 @@ level until that changes.
 
 | ID | Requirement | satisfied-by |
 |---|---|---|
-| REQ-KYP-C-01 | The control plane MUST never initiate a connection into a tenant; every delivery path is tenant-pull. | [ADR-0001](../../adr/0001-three-planes-pull-only.md) |
-| REQ-KYP-C-02 | The control plane MUST hold no credentials into any customer environment. | [ADR-0001](../../adr/0001-three-planes-pull-only.md) |
+| REQ-KYP-C-01 | The control plane MUST never initiate a connection into a tenant; every delivery path is tenant-pull. | [ADR-0001](../../adr/0001-plane-structure.md) |
+| REQ-KYP-C-02 | The control plane MUST hold no credentials into any customer environment. | [ADR-0001](../../adr/0001-plane-structure.md) |
 | REQ-KYP-C-03 | Golden artifacts MUST be signed and carry an SBOM before any tenant can pull them. | — |
 | REQ-KYP-C-04 | The tenant registry MUST be the single authority for per-tenant resolution: class, binding resolution, siteClass per site, ingestion mode, enabled modules, version pins. | [ADR-0013](../../adr/0013-tenant-registry-record-schema.md) (proposed) |
 | REQ-KYP-C-05 | Staff access MUST enter only via the staff identity federation. | — |

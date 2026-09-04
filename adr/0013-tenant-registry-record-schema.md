@@ -6,6 +6,9 @@ affects: [KYP-C-FLEET-01]
 ---
 # Tenant registry records have a schema-by-example contract; instance views are generated
 
+Amended by [ADR-0023](0023-common-services-plane.md): the record gains
+common-services opt-in and acceptable-jurisdiction fields.
+
 ## Context
 Developers need concrete per-tenant, per-environment views: endpoints,
 resolved products, quotas, version pins. Taxonomy §6 forbids instances in

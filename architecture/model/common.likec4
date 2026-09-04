@@ -1,0 +1,26 @@
+model {
+  common = plane 'Common services' {
+    description 'Kyper operated. Shared capacity and shared-model inference for opted-in tenants only. Never initiates into a tenant. Design open.'
+    metadata { kypId 'KYP-S'; adr 'ADR-0023'; status 'gap' }
+
+    pool = area 'Shared capacity pool' {
+      description 'Hardware assigned to one tenant at a time. Isolation model open.'
+      metadata { kypId 'KYP-S-POOL'; adr 'ADR-0023'; status 'gap' }
+      scheduler = service 'Capacity scheduler' { metadata { kypId 'KYP-S-POOL-01' } }
+    }
+
+    inference = area 'Shared inference' {
+      description 'Factory-built shared models served to opted-in tenants. Isolation and batching posture open.'
+      metadata { kypId 'KYP-S-INF'; adr 'ADR-0023'; status 'gap' }
+      runtime = service 'Shared model runtime' { metadata { kypId 'KYP-S-INF-01' } }
+    }
+
+    entry = boundary 'Common services entry' {
+      description 'The seam opted-in tenants reach outbound. Relation kind for invocation across it: open (ADR-0023).'
+      metadata { kypId 'KYP-S-ENTRY-01'; adr 'ADR-0023' }
+    }
+  }
+
+  // ---- Software reaches common services the way it reaches a tenant: pulled from the control plane.
+  control.goldenArtifacts -[servesTo]-> common.inference.runtime 'shared models (pulled)'
+}

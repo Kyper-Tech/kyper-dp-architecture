@@ -10,7 +10,7 @@ superseded. Nothing is accepted yet — the baseline is under review.
 
 | ADR | Decision | Affects |
 |---|---|---|
-| [ADR-0001](../../adr/0001-three-planes-pull-only.md) | Three planes; pull-only trust downward | KYP-C, KYP-T, KYP-E |
+| [ADR-0001](../../adr/0001-plane-structure.md) | Five planes; trust direction set per seam | KYP-C, KYP-F, KYP-S, KYP-T, KYP-E |
 | [ADR-0002](../../adr/0002-tenant-per-customer.md) | Silo tenancy: one tenant plane per customer | KYP-T |
 | [ADR-0003](../../adr/0003-generic-sync-layer.md) | Generic sync layer, not a named broker | KYP-T-SYNC-01, KYP-E |
 | [ADR-0004](../../adr/0004-registries-only-handoff.md) | Registries are the only producer→runtime handoff | KYP-T-REG, KYP-T-DEVWS, KYP-T-MLWS |
@@ -29,6 +29,8 @@ superseded. Nothing is accepted yet — the baseline is under review.
 | [ADR-0018](../../adr/0018-customer-identity-federation.md) | Customer users federate to the customer's IdP, per tenant | KYP-T-TRUST-01, KYP-T-TRUST-02, KYP-E-SITE-02 |
 | [ADR-0019](../../adr/0019-onprem-object-store-requirements.md) | On-prem object store requirements; no product selected | KYP-T-DATA-01 |
 | [ADR-0021](../../adr/0021-workspace-instances-differ-by-environment.md) | Workspace instances differ per environment in purpose and grants | KYP-T-DEVWS, KYP-T-MLWS, KYP-T-DATAWS |
+| [ADR-0022](../../adr/0022-product-factory-plane.md) | Product factory: a fourth plane where Kyper builds, tests and signs the product | KYP-F, KYP-C-FLEET-02 |
+| [ADR-0023](../../adr/0023-common-services-plane.md) | Common services: a fifth plane, opt-in per tenant, design open | KYP-S, KYP-T |
 
 Rejected options that must not be re-proposed are listed in
 [CLAUDE.md](../../CLAUDE.md) ("Rejected options") with the ADR that closed

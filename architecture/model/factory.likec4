@@ -1,0 +1,59 @@
+model {
+  factory = plane 'Product factory' {
+    description 'One instance, Kyper operated. Builds, tests and signs the product. No relation to any tenant.'
+    metadata { kypId 'KYP-F'; adr 'ADR-0022' }
+
+    devws = area 'Product dev workspace' {
+      description 'Development of the platform. Ephemeral; publishes only to factory registries.'
+      metadata { kypId 'KYP-F-DEVWS'; adr 'ADR-0004,ADR-0012,ADR-0022' }
+      sessions  = service 'Sessions'           { metadata { kypId 'KYP-F-DEVWS-01' } }
+      buildJobs = service 'Build, test jobs'   { metadata { kypId 'KYP-F-DEVWS-02' } }
+      envImages = service 'Environment images' { metadata { kypId 'KYP-F-DEVWS-03' } }
+    }
+
+    mlws = area 'Shared-model workspace' {
+      description 'Development of shared models on synthetic, public or consented data only. Ephemeral; publishes only to factory registries.'
+      metadata { kypId 'KYP-F-MLWS'; adr 'ADR-0004,ADR-0012,ADR-0022' }
+      sessions     = service 'Notebook sessions' { metadata { kypId 'KYP-F-MLWS-01' } }
+      trainingJobs = service 'Training jobs'     { metadata { kypId 'KYP-F-MLWS-02' } }
+    }
+
+    registries = area 'Factory registries' {
+      description 'The factory handoff seam. Immutable, versioned.'
+      metadata { kypId 'KYP-F-REG'; adr 'ADR-0004,ADR-0022' }
+      sourceRepo    = registry 'Source repo'    { metadata { kypId 'KYP-F-REG-01' } }
+      artifactRepo  = registry 'Artifact repo'  { metadata { kypId 'KYP-F-REG-02' } }
+      modelRegistry = registry 'Model registry' { metadata { kypId 'KYP-F-REG-03' } }
+      experiments   = registry 'Experiments'    { metadata { kypId 'KYP-F-REG-04' } }
+    }
+
+    reference = area 'Reference environment' {
+      description 'Tenant-shaped, synthetic data only. Where the product is tested before release. Not a tenant.'
+      metadata { kypId 'KYP-F-REF'; adr 'ADR-0022' }
+      runtime = service 'Reference runtime' { metadata { kypId 'KYP-F-REF-01' } }
+    }
+
+    ops = area 'Factory operations' {
+      metadata { kypId 'KYP-F-OPS'; adr 'ADR-0022' }
+      cicd     = service 'CI/CD'    { metadata { kypId 'KYP-F-OPS-01' } }
+      scanning = service 'Scanning' { metadata { kypId 'KYP-F-OPS-02' } }
+    }
+
+    trust = area 'Factory trust' {
+      description 'Secrets and the signing keys that make an artifact golden. Staff enter via the control-plane staff federation.'
+      metadata { kypId 'KYP-F-TRUST'; adr 'ADR-0022' }
+      secrets     = service 'Secrets'      { metadata { kypId 'KYP-F-TRUST-01' } }
+      signingKeys = service 'Signing keys' { metadata { kypId 'KYP-F-TRUST-02' } }
+    }
+  }
+
+  // ---- Inside the factory: producers -> registries -> reference runtime
+  factory.devws.sessions      -[publishesTo]-> factory.registries.sourceRepo    'commits'
+  factory.devws.buildJobs     -[publishesTo]-> factory.registries.artifactRepo  'images, packages'
+  factory.mlws.trainingJobs   -[publishesTo]-> factory.registries.modelRegistry 'shared model versions'
+  factory.mlws.trainingJobs   -[publishesTo]-> factory.registries.experiments   'evaluation records'
+  factory.registries.artifactRepo -[servesTo]-> factory.reference.runtime       'release candidates'
+
+  // ---- The factory's only outbound path (ADR-0022): golden artifacts into the control plane.
+  factory.ops.cicd -[publishesTo]-> control.goldenArtifacts 'signed, scanned, SBOM-carrying releases'
+}

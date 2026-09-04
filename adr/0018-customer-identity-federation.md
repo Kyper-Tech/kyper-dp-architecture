@@ -64,3 +64,5 @@ at all.
   staff and customer users in one trust seam.
 - Requiring connectivity for every login: makes a dead WAN a production
   stop at the site, contradicting the edge plane's reason to exist.
+
+Scope: staff federation covers the product factory; per-request tenant identity extends across the common-services boundary ([ADR-0022](0022-product-factory-plane.md), [ADR-0023](0023-common-services-plane.md)).

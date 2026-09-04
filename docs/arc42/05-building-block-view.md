@@ -8,14 +8,16 @@ declared in `architecture/model/spec.likec4`.
 
 ## Level 1 — Whitebox: the platform
 
-Three planes with pull-only trust downward
-([ADR-0001](../../adr/0001-three-planes-pull-only.md)).
+Five planes; the trust direction is set per seam
+([ADR-0001](../../adr/0001-plane-structure.md)).
 
 ![Planes](../../diagrams/views/index.png)
 
 | Block | KYP-ID | Responsibility (one line) |
 |---|---|---|
 | Control plane | KYP-C | Fleet config, golden artifacts, release control; one instance; never initiates into a tenant |
+| Product factory | KYP-F | Builds, tests and signs the product and shared models; publishes golden artifacts to control; no relation to any tenant ([ADR-0022](../../adr/0022-product-factory-plane.md)) |
+| Common services | KYP-S | Shared capacity and shared-model inference for opted-in tenants; design open ([ADR-0023](../../adr/0023-common-services-plane.md)) |
 | Tenant plane | KYP-T | Full platform per customer ([ADR-0002](../../adr/0002-tenant-per-customer.md)); pulls from control |
 | Edge plane | KYP-E | Optional per-site inference; exchanges with tenant only via the sync layer |
 

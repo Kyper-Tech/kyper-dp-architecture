@@ -41,3 +41,5 @@ Per-tenant resolution stays in the control-plane tenant registry.
 - Requiring one uniform wire protocol across all tenant classes: would
   reject GCS's native path or force every binding through an
   interoperability endpoint.
+
+Scope: common-services bindings are keyed by jurisdiction rather than tenant class ([ADR-0023](0023-common-services-plane.md)).

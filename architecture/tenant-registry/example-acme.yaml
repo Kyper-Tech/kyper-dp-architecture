@@ -11,6 +11,9 @@ tenantClass: onprem          # taxonomy §1 axis
 availabilityPosture: standard
 ingestionMode: pull          # push | pull (ADR-0001)
 enabledModules: [ml, edge]
+commonServices:              # ADR-0023; default is not opted in
+  optIn: false
+  jurisdictions: []          # acceptable regions, when opted in
 versionPins:
   platform: "1.4.2"
 sites:                       # instances of the edge plane (taxonomy §6)

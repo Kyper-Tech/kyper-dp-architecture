@@ -8,7 +8,7 @@ affects: [KYP-T-DATA-10, KYP-T-DATA-11, KYP-E-RT]
 
 ## Context
 Customer systems (historians, PLCs, cloud APIs) are touched from two
-altitudes: tenant connectors ingest (push or pull, [ADR-0001](0001-three-planes-pull-only.md)) and sites
+altitudes: tenant connectors ingest (push or pull, [ADR-0001](0001-plane-structure.md)) and sites
 read plant systems locally for inference. Three defects follow today:
 the external kind exists but no relation kind can reach it, so none of
 this is drawable; the edge side has no named boundary for plant reads
@@ -32,7 +32,7 @@ would break lineage and double-count data.
    plants without edge). The altitude is recorded per source in the tenant
    registry.
 5. Credentials follow the accessor. Tenant-ingested sources: credentials
-   in that tenant's Secrets, audited ([ADR-0001](0001-three-planes-pull-only.md)). Site-ingested sources:
+   in that tenant's Secrets, audited ([ADR-0001](0001-plane-structure.md)). Site-ingested sources:
    credentials held at that site, scoped to it — a compromised site
    exposes one plant's sources, not the tenant's.
 
