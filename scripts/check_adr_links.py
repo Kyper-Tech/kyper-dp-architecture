@@ -24,4 +24,19 @@ for adr, p in adrs.items():
     for target in (t.strip() for t in m.group(1).split(",") if t.strip()) if m else []:
         if target not in adrs: errors.append(f"{adr} amends missing {target}")
         elif adr not in adrs[target].read_text(): errors.append(f"{target} does not reference its amender {adr}")
+# cross-environment rule (ADR-0006): an env-scoped area may reach a mediating
+# service or a per-env store, never a store marked shared 'across-envs'.
+env_areas, shared_stores, relations = set(), set(), []
+for p in (root/"architecture/model").rglob("*.likec4"):
+    txt = p.read_text(); plane = re.search(r"^\s*(\w+)\s*=\s*plane\b", txt, re.M)
+    if not plane: continue
+    pl = plane.group(1)
+    for m in re.finditer(r"(\w+)\s*=\s*area\s+'[^']*'\s*\{(.*?)(?=\n\s*\w+\s*=\s*(?:service|store|registry|boundary)\b)", txt, re.S):
+        if "envScoped 'true'" in m.group(2): env_areas.add(f"{pl}.{m.group(1)}")
+    for m in re.finditer(r"(\w+)\s*=\s*store\s+'[^']*'\s*\{([^}]*)\}", txt):
+        if "shared 'across-envs'" in m.group(2): shared_stores.add((pl, m.group(1)))
+    relations += re.findall(r"^\s*([\w.]+)\s*-\[\w+\]->\s*([\w.]+)", txt, re.M)
+for s, t in relations:
+    if ".".join(s.split(".")[:2]) in env_areas and (t.split(".")[0], t.split(".")[-1]) in shared_stores:
+        errors.append(f"cross-env violation: {s} reaches shared store {t} directly")
 print("\n".join(errors) or "gate: ok"); sys.exit(1 if errors else 0)

@@ -23,7 +23,9 @@ stores differ by store.class (taxonomy §5), extended with one value:
 Layers and stores:
 1. Hot / landing — Time-series store (new, KYP-T-DATA-08,
    class timeseries, contract timeseries-query): telemetry lands here in
-   the raw zone; owns retention and downsampling.
+   the raw zone; owns retention and downsampling. It comes with a read-path
+   mediating service: non-production reaches the read path, never the
+   store ([ADR-0006](0006-shared-zoned-data-layer.md), network separation).
 2. Curated / multimodal lakehouse — Object store + Tables (unchanged,
    analytical). The system of record for every modality: downsampled
    telemetry history, documents (manuals, reports), images, and offline

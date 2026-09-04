@@ -5,6 +5,19 @@ The trade-offs themselves, with their controls and evidence, are in the
 what is not yet settled. Most are commitments to enforce when the
 components are built, not defects failing today.
 
+## Accepted residual risk
+
+- **Shared object storage is separated between environments by
+  authorization only.** The bucket is reachable from non-production; no
+  workload holds standing permission and every access is scoped per request
+  and audited, but a compromised mediator or a scope-evaluation defect
+  exposes the whole bucket. Accepted knowingly
+  ([ADR-0006](../../adr/0006-shared-zoned-data-layer.md)) — **Risk owner: the CTO.** Conditions that keep it acceptable: the mediator's own
+  hardening and change control, and an audit trail that can answer "did any
+  non-production identity ever read production-only objects". Escape valve:
+  per-environment analytical stores for a tenant class or contract that
+  requires physical separation.
+
 ## To be addressed
 
 - **Recovery targets for self-run stores.** Managed object storage carries

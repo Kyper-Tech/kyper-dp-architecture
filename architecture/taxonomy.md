@@ -67,9 +67,11 @@ Two classifications of areas — not kinds:
   orchestration areas. Marked envScoped (§5).
 - band — an area outside the environment container: instantiated once per
   tenant, shared across environments (registries, trust services, operation
-  services). Recognizable by absent envScoped. The data layer is also
-  cross-environment but is marked shared (§5) — one instance by decision
-  ([ADR-0006](../adr/0006-shared-zoned-data-layer.md)), not merely one per tenant.
+  services). Recognizable by absent envScoped. The data layer area holds
+  both shared analytical stores (marked shared, §5) and per-environment
+  stores, so crossing that area is not the same as crossing the
+  environment: the store's shared flag decides, not the area
+  ([ADR-0006](../adr/0006-shared-zoned-data-layer.md)).
 
 ## 4. Relation kinds
 A relation connects two elements with a declared meaning. The signature
