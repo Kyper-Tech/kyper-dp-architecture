@@ -297,28 +297,42 @@ a breaking change is always a new version. Detail in
 
 ## Accepted costs
 
-These are deliberate trade-offs, not oversights. Each is acceptable only
-because a named control holds it in place — and a security or compliance
-review will ask for evidence that the control actually operated, not that
-it exists. So each row names both. A row whose evidence column is open is
-a gap until the target is set, not an accepted cost.
+These are deliberate trade-offs, not oversights. An accepted cost has three
+things: a control that holds it in place, evidence that the control
+operated (a review asks for that, not for the control's existence), and an
+owner who signed the acceptance. Anything missing one of those is an open
+decision, listed below — not an accepted cost. The signable entries —
+treatment, conditions, fallback, triggers, signature — are in the
+[risk register](risk-register.md); the rows here are the summary.
 
-| Accepted cost | What makes it acceptable | Evidence |
-|---|---|---|
-| The analytical stores are shared across environments ([ADR-0006](../adr/0006-shared-zoned-data-layer.md)) | Zoning: the curated zone is writable only by the prod orchestration identity; nonprod writes only its own sandbox; access policy enforces on the catalog, the query engine and the operational database. Operational and online stores are per environment, so they are not exposed at all | Cross-zone grant log in the audit trail; scenario [Q-03](arc42/10-quality-requirements.md) |
-| Shared object storage is separated between environments by authorization only — the bucket is reachable from nonprod; a compromised mediator or scope defect exposes it whole ([ADR-0006](../adr/0006-shared-zoned-data-layer.md)) | No workload holds standing permission; credentials are short-lived and scoped per request to the effective grant; every access audited. The mediator is therefore the control and is hardened and change-controlled as such. Escape valve: per-environment analytical stores for a tenant class or contract requiring physical separation | Signed risk acceptance in the register — **risk owner: the CTO**; mediator change-control and privileged-access review records; credential lifetimes as measured numbers; an audit query proving no nonprod identity read production-only objects |
-| Therefore one failure domain spans environments, for the analytical stores | Managed object storage for cloud tenants; catalog and query engine stay self-run | Per-store DR posture ([ADR-0014](../adr/0014-data-layer-storage-layers.md), proposed). **Open:** RPO/RTO per tenant class ([Q-06](arc42/10-quality-requirements.md)) |
-| One query engine serves the prod application and nonprod exploration | Workload isolation between the two | **Open:** isolation target not yet set ([Q-07](arc42/10-quality-requirements.md)) |
-| No formal stage environment ([ADR-0005](../adr/0005-two-environments.md)) | Full-scale rehearsal is a nonprod run against curated data, read-only | Nonprod cannot write curated by construction (same control as row 1) |
+| Accepted cost | Control | Residual risk | Evidence | Owner |
+|---|---|---|---|---|
+| The analytical stores are shared across environments ([ADR-0006](../adr/0006-shared-zoned-data-layer.md)) | Zoning: the curated zone is writable only by the prod orchestration identity, nonprod writes only its own sandbox; every read is mediated by the catalog or the query engine; operational and online stores are per environment and not exposed at all | The shared bucket is reachable from nonprod — separation is authorization only, and a compromised mediator or a scope-evaluation defect exposes it whole. Escape valve: per-environment analytical stores for a tenant class or contract that requires physical separation | Cross-zone grant log ([Q-03](arc42/10-quality-requirements.md)); mediator change-control and privileged-access review records; credential lifetimes as measured numbers; an audit query proving no nonprod identity read production-only objects; signed acceptance in the risk register | CTO |
+| One failure domain spans environments, for the analytical stores | Managed object storage for cloud tenants; per-store DR posture ([ADR-0014](../adr/0014-data-layer-storage-layers.md), proposed) | On-prem tenants and the self-run components (catalog, query engine) carry it without managed durability | Per-store DR posture; the recovery targets themselves are the BC/DR open decision below ([Q-06](arc42/10-quality-requirements.md)) | CTO |
+| No formal stage environment ([ADR-0005](../adr/0005-two-environments.md)) | Full-scale rehearsal is a nonprod run against curated data, read-only | Rehearsal proves only as much as nonprod resembles prod | Nonprod cannot write curated by construction (row 1's control) | CTO |
 
 The compliance reading of these rows — which criterion each answers, and
 what an auditor would be shown — belongs in
 [risks and technical debt](arc42/11-risks-and-technical-debt.md).
 
 ## Open decisions
+
+**Awaiting a decision**
 - Request-response vs batch inference (blocks online feature path) — oldest open fork
 - Semantic layer above query engine (only if >1 consumer defines same KPI)
-- Business continuity and disaster recovery — TBD, not yet addressed:
+- Query-engine workload isolation between the prod application and nonprod
+  exploration: the isolation is required, the target is not yet set
+  ([Q-07](arc42/10-quality-requirements.md)). Not an accepted cost until it is.
+- Analyst workspace (own area vs a home inside dev workspace)
+- Common services: the relation kind for a tenant invoking a shared service
+  across a plane boundary. None of the existing kinds fits a
+  request-response call; until one is decided, the tenant → common services
+  seam is a named boundary and a trust rule, but not a drawn relation
+  ([ADR-0023](../adr/0023-common-services-plane.md)).
+
+**Gaps — work not yet done** (also tracked in
+[risks and technical debt](arc42/11-risks-and-technical-debt.md))
+- Business continuity and disaster recovery — not yet addressed:
   availability targets per stateful component; RPO/RTO per tenant class;
   whether geographically resilient hosting is offered; and the interval at
   which recovery plans are tested. Until these exist, the resiliency
@@ -327,7 +341,8 @@ what an auditor would be shown — belongs in
   provision, suspend, and offboard. Offboarding must cover data export,
   secure deletion of customer data across every store and backup, and a
   published exit procedure a customer can be shown; none of it exists yet.
-- Analyst workspace (own area vs a home inside dev workspace)
+
+**Deferred — trigger defined**
 - Control-plane residency. Today one control plane serves all tenants.
   That is defensible because it holds no customer data (REQ-KYP-C-07):
   only desired state, signed releases and health summaries. The open
@@ -338,12 +353,9 @@ what an auditor would be shown — belongs in
   shape is: tenant registry and fleet health per jurisdiction, golden
   artifacts global or mirrored. Distance and latency are not triggers —
   the control plane sits in no runtime path.
-- Common services: the relation kind for a tenant invoking a shared service
-  across a plane boundary. None of the existing kinds fits a
-  request-response call; until one is decided, the tenant → common services
-  seam is a named boundary and a trust rule, but not a drawn relation
-  ([ADR-0023](../adr/0023-common-services-plane.md)).
-- Federated learning across tenants (future option; keep compatible, do not build)
+
+**Explicitly not building**
+- Federated learning across tenants — keep compatible, do not build.
 
 ## Standards to map against (see [docs/analysis-plan.md](analysis-plan.md))
 ISO/IEC 23053 (vocabulary), ISO/IEC 5338/42001/23894/5259, CNCF CNAI + Data-on-K8s AI

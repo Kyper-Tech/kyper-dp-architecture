@@ -5,18 +5,21 @@ The trade-offs themselves, with their controls and evidence, are in the
 what is not yet settled. Most are commitments to enforce when the
 components are built, not defects failing today.
 
-## Accepted residual risk
+## Accepted architectural risks
 
-- **Shared object storage is separated between environments by
-  authorization only.** The bucket is reachable from non-production; no
-  workload holds standing permission and every access is scoped per request
-  and audited, but a compromised mediator or a scope-evaluation defect
-  exposes the whole bucket. Accepted knowingly
-  ([ADR-0006](../../adr/0006-shared-zoned-data-layer.md)) — **Risk owner: the CTO.** Conditions that keep it acceptable: the mediator's own
-  hardening and change control, and an audit trail that can answer "did any
-  non-production identity ever read production-only objects". Escape valve:
-  per-environment analytical stores for a tenant class or contract that
-  requires physical separation.
+Three risks are carried on purpose. Each has a full entry — treatment,
+controls, residual, conditions, fallback, triggers, and the owner's
+signature line — in the [risk register](../risk-register.md). Owner for
+all three: the CTO. None is signed yet.
+
+- **RISK-01** — shared analytical stores are separated between environments
+  by authorization only; a compromised mediator or scope defect exposes the
+  whole bucket to non-production.
+- **RISK-02** — one failure domain spans environments for the analytical
+  stores; recovery targets are not yet set, so this one cannot be fully
+  accepted until the BC/DR decision lands.
+- **RISK-03** — no formal stage environment; production-only conditions are
+  untested before release.
 
 ## To be addressed
 
