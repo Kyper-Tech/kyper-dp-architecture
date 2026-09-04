@@ -318,17 +318,47 @@ what an auditor would be shown — belongs in
 ## Open decisions
 
 **Awaiting a decision**
-- Request-response vs batch inference (blocks online feature path) — oldest open fork
-- Semantic layer above query engine (only if >1 consumer defines same KPI)
-- Query-engine workload isolation between the prod application and nonprod
-  exploration: the isolation is required, the target is not yet set
-  ([Q-07](arc42/10-quality-requirements.md)). Not an accepted cost until it is.
-- Analyst workspace (own area vs a home inside dev workspace)
-- Common services: the relation kind for a tenant invoking a shared service
-  across a plane boundary. None of the existing kinds fits a
-  request-response call; until one is decided, the tenant → common services
-  seam is a named boundary and a trust rule, but not a drawn relation
-  ([ADR-0023](../adr/0023-common-services-plane.md)).
+
+- **Request-response vs batch inference.** Does the platform's primary
+  inference path answer a call synchronously — the application asks the
+  model and waits — or score on a schedule, writing predictions to the
+  predictions store for the application to read later? Both can coexist;
+  the decision is which is the default and, above all, whether an *online
+  feature path* is built: request-response needs features computed at call
+  time and served from the online feature store, batch does not. It shapes
+  the inference gateway's latency commitments, the feature store, and how
+  edge (inherently request-response) relates to tenant serving. The oldest
+  open fork, and the one most other serving decisions wait on.
+- **Semantic layer above the query engine.** One place that defines what a
+  business metric means — OEE, downtime, yield — so the application,
+  dashboards and notebooks compute the same number from the same
+  definition. Without it, each consumer defines its own. The rule for
+  deciding: build it only when more than one consumer defines the same KPI,
+  because before that it is ceremony. The trigger is therefore observable,
+  not a matter of taste.
+- **Query-engine workload isolation.** One query engine serves the
+  production application and non-production exploration. The isolation is
+  required; the *target* is not set — how much may an exploration spike
+  degrade production queries? Options range from workload management inside
+  one engine to separate engine instances per environment. Not an accepted
+  cost until the target exists ([Q-07](arc42/10-quality-requirements.md)).
+- **Analyst workspace.** A fourth audience — analysts who query, build
+  dashboards and reports, and neither ship software nor train models — has
+  no home. Apply the same test that split dev and ML
+  ([ADR-0012](../adr/0012-split-dev-ml-workspaces.md)): does the analyst's
+  boundary rule differ? Data scope looks like dev's (curated only); the
+  publish target does not — analysts publish reports and dashboards, not
+  registry entries. If that difference is real, it is its own area; if
+  dashboards are treated as artifacts, analysts live inside the dev
+  workspace.
+- **Common services: the relation kind.** How a tenant invoking a shared
+  service across a plane boundary is expressed in the model. None of the
+  existing kinds fits a request-response call: `readsVia` is about reading
+  state through a mediator, `syncsWith` is asynchronous exchange across a
+  boundary. Options: widen `readsVia`, or add a kind such as `invokes :
+  component -> boundary`. Until decided, the tenant → common services seam
+  is a named boundary and a trust rule, but no arrow is drawn in any
+  diagram — deliberately ([ADR-0023](../adr/0023-common-services-plane.md)).
 
 **Gaps — work not yet done** (also tracked in
 [risks and technical debt](arc42/11-risks-and-technical-debt.md))
